@@ -1,0 +1,17 @@
+import sys
+import os
+#import time
+import subprocess
+
+
+print(sys.argv)
+
+print("PID:")
+print (os.getpid())
+
+dr = './'
+os.chdir(dr)
+
+pcall = subprocess.call([sys.executable, '-m', 'pytorch_fid', './data/datasets/' + sys.argv[1] + '/trainB', './data/movie/' + sys.argv[2] + '/test_latest/images2', '--batch-size' ,'1'])
+
+# python -m pytorch_fid aiMovieToolWeb/data/datasets/D20-0033/trainB aiMovieToolWeb/data/movie/I20-0052/test_latest/images --batch-size 1

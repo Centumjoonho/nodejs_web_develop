@@ -1,0 +1,14 @@
+import sys
+import os
+#import time
+import subprocess
+
+print(sys.argv)
+
+print("PID:")
+print (os.getpid())
+
+#dr = '../pytorch-CycleGAN-and-pix2pix/'
+#os.chdir(dr)
+
+pcall = subprocess.call([sys.executable, './combine_A_and_B.py', '--fold_A', sys.argv[1], '--fold_B', sys.argv[2], '--fold_AB', sys.argv[3] ]);

@@ -1,0 +1,292 @@
+-- phpMyAdmin SQL Dump
+-- version 4.6.6deb5ubuntu0.5
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost:3306
+-- 생성 시간: 21-08-18 17:00
+-- 서버 버전: 5.7.34-0ubuntu0.18.04.1-log
+-- PHP 버전: 7.2.24-0ubuntu0.18.04.8
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- 데이터베이스: `aiToolDB`
+--
+CREATE DATABASE IF NOT EXISTS `aiToolDB` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `aiToolDB`;
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `common_cd`
+--
+
+DROP TABLE IF EXISTS `common_cd`;
+CREATE TABLE `common_cd` (
+  `group_cd` varchar(10) NOT NULL COMMENT '그룹코드',
+  `common_cd` varchar(10) NOT NULL COMMENT '공통코드',
+  `create_tm` datetime DEFAULT NULL COMMENT '생성일시',
+  `update_tm` datetime DEFAULT NULL COMMENT '수정일시',
+  `common_nm` varchar(100) NOT NULL COMMENT '공통코드명',
+  `remark` varchar(300) DEFAULT NULL COMMENT '설명',
+  `order_no` int(11) DEFAULT '1' COMMENT '정렬순서',
+  `use_yn` varchar(1) NOT NULL DEFAULT 'Y' COMMENT '사용유무'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='공통코드';
+
+--
+-- 테이블의 덤프 데이터 `common_cd`
+--
+
+INSERT INTO `common_cd` (`group_cd`, `common_cd`, `create_tm`, `update_tm`, `common_nm`, `remark`, `order_no`, `use_yn`) VALUES
+('IMG_TYPE', '*', '2020-04-06 13:11:25', NULL, '이미지 유형 코드', '이미지 유형 코드를 정의합니다.', 1, 'Y'),
+('IMG_TYPE', 'GRAY_SCALE', '2020-04-06 13:11:25', NULL, 'Gray Scale', 'Gray Scale', 2, 'Y'),
+('IMG_TYPE', 'RGB', '2020-04-06 13:11:25', NULL, 'RGB', 'RGB', 1, 'Y'),
+('LEARN_STAT', '*', '2020-04-06 17:15:12', NULL, '학습 상태 코드', '학습 상태 코드를 정의합니다.', 4, 'Y'),
+('LEARN_STAT', 'DONE', '2020-04-06 17:15:12', NULL, '학습완료', '학습완료', 3, 'Y'),
+('LEARN_STAT', 'ERROR', '2020-04-06 17:15:12', NULL, '오류', '오류', 4, 'Y'),
+('LEARN_STAT', 'LEARNING', '2020-04-06 17:15:12', NULL, '학습중', '학습중 입니다.', 2, 'Y'),
+('LEARN_STAT', 'READY', '2020-04-06 17:15:12', NULL, '준비상태', '준비상태', 1, 'Y'),
+('MOVIE_STAT', '*', '2020-04-06 13:11:25', NULL, '동영상 상태 코드', '동영상 상태 코드를 정의합니다.', 3, 'Y'),
+('MOVIE_STAT', 'DONE', '2020-04-06 13:11:25', NULL, '생성완료', '생성완료', 3, 'Y'),
+('MOVIE_STAT', 'ERROR', '2020-04-06 13:11:25', NULL, '오류', '오류', 4, 'Y'),
+('MOVIE_STAT', 'MAKING', '2020-04-06 13:11:25', NULL, '생성중', '생성중 입니다.', 2, 'Y'),
+('MOVIE_STAT', 'READY', '2020-04-06 13:11:25', NULL, '준비상태', '준비상태', 1, 'Y'),
+('MOVIE_TYPE', '*', '2020-04-06 13:11:25', NULL, '동영상 유형 코드', '동영상 유형 코드를 정의합니다.', 2, 'Y'),
+('MOVIE_TYPE', 'AVI', '2020-04-06 13:11:25', NULL, 'AVI', 'AVI', 2, 'Y'),
+('MOVIE_TYPE', 'MP4', '2020-04-06 13:11:25', NULL, 'MP4', 'MP4', 3, 'Y'),
+('MOVIE_TYPE', 'WMV', '2020-04-06 13:11:25', NULL, 'WMV', 'WMV', 1, 'Y'),
+('SCENARIO', '*', '2020-04-06 13:11:25', NULL, '시나리오 코드', '시나리오 코드를 정의합니다.', 0, 'Y'),
+('SCENARIO', 'ETCS', '2020-04-06 13:11:25', NULL, '기타', '기타', 5, 'Y'),
+('SCENARIO', 'FIRE', '2020-04-06 13:11:25', NULL, '화재', '화재', 1, 'Y'),
+('SCENARIO', 'FLOOD', '2020-04-06 13:11:25', NULL, '홍수', '홍수', 3, 'Y'),
+('SCENARIO', 'SNOW', '2020-04-06 13:11:25', NULL, '폭설', '폭설', 2, 'Y'),
+('SCENARIO', 'TIDE', '2020-04-06 13:11:25', NULL, '녹,적조', '녹,적조', 4, 'Y');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `dataset`
+--
+
+DROP TABLE IF EXISTS `dataset`;
+CREATE TABLE `dataset` (
+  `dataset_cd` varchar(10) NOT NULL COMMENT 'Dataset 코드',
+  `create_tm` datetime NOT NULL COMMENT '생성일시',
+  `update_tm` datetime DEFAULT NULL COMMENT '수정일시',
+  `dataset_nm` varchar(100) NOT NULL COMMENT 'Dataset 명',
+  `scenario_cd` varchar(10) NOT NULL COMMENT '시나리오 코드. FIRE-화재, SNOW-폭설, FLOOD-홍수, TIDE-녹적조',
+  `remark` varchar(300) DEFAULT NULL COMMENT '설명',
+  `img_hor_px` int(11) NOT NULL COMMENT '이미지 가로 픽셀',
+  `img_ver_px` int(11) NOT NULL COMMENT '이미지 세로 픽셀',
+  `img_type_cd` varchar(10) NOT NULL COMMENT '이미지 유형 코드. grayscale-Grayscale',
+  `imgx_up_nm` varchar(100) NOT NULL COMMENT '업로드 학습용 이미지 명',
+  `imgx_size_kb` int(11) NOT NULL DEFAULT '0' COMMENT '업로드 학습용 이미지 사이즈',
+  `imgx_save_path` varchar(256) NOT NULL COMMENT '학습용 이미지 저장 경로. / 포함',
+  `imgx_save_nm` varchar(256) NOT NULL COMMENT '저장된 학습용 이미지 명',
+  `imgx_web_url` varchar(256) NOT NULL COMMENT '저장된 학습용 이미지 경로',
+  `imgy_up_nm` varchar(100) NOT NULL COMMENT '참고용 업로드 이미지 명',
+  `imgy_size_kb` int(11) NOT NULL DEFAULT '0' COMMENT '참고용 업로드 이미지 사이즈',
+  `imgy_save_path` varchar(256) NOT NULL COMMENT '참고용 이미지 저장 경로',
+  `imgy_save_nm` varchar(256) NOT NULL COMMENT '참고용 이미지 저장 명',
+  `imgy_web_url` varchar(256) NOT NULL COMMENT '저장된 학습용 이미지 경로',
+  `use_learning_rate` int(11) DEFAULT '0' COMMENT '학습비율',
+  `use_verify_rate` int(11) DEFAULT '0' COMMENT '검증비율',
+  `use_test_rate` int(11) DEFAULT '0' COMMENT '시험비율',
+  `use_yn` varchar(1) DEFAULT 'Y' COMMENT '사용유무'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Dataset 내용 정의';
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `learning`
+--
+
+DROP TABLE IF EXISTS `learning`;
+CREATE TABLE `learning` (
+  `learning_cd` varchar(10) NOT NULL COMMENT '학습코드',
+  `create_tm` datetime DEFAULT NULL COMMENT '생성일시',
+  `update_tm` datetime DEFAULT NULL COMMENT '수정일시',
+  `learning_nm` varchar(100) NOT NULL COMMENT '학습명',
+  `remark` varchar(300) DEFAULT NULL COMMENT '설명',
+  `start_tm` datetime DEFAULT NULL COMMENT '학습시작일시',
+  `end_tm` datetime DEFAULT NULL COMMENT '학습종료일시',
+  `dataset_cd` varchar(10) NOT NULL COMMENT '사용한 dataset 코드',
+  `learning_model_cd` varchar(10) NOT NULL COMMENT '학습 모델 코드',
+  `now_epoch` int(11) DEFAULT '0' COMMENT '현 진행 중인 epoch 값',
+  `learning_state_cd` varchar(10) NOT NULL DEFAULT 'READY' COMMENT '학습 상태 : READY-준비, ING-학습중, PAUSE-중지, DONE-완료, DEL-제거'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='학습 내용 정의';
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `learning_model`
+--
+
+DROP TABLE IF EXISTS `learning_model`;
+CREATE TABLE `learning_model` (
+  `learning_model_cd` varchar(10) NOT NULL COMMENT '모델코드',
+  `create_tm` datetime NOT NULL COMMENT '생성일시',
+  `update_tm` datetime DEFAULT NULL COMMENT '수정일시',
+  `learning_model_nm` varchar(50) NOT NULL COMMENT '모델명',
+  `remark` varchar(300) DEFAULT NULL COMMENT '설명',
+  `use_yn` varchar(1) NOT NULL COMMENT '사용유무'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='딥러닝 모델 정의';
+
+--
+-- 테이블의 덤프 데이터 `learning_model`
+--
+
+INSERT INTO `learning_model` (`learning_model_cd`, `create_tm`, `update_tm`, `learning_model_nm`, `remark`, `use_yn`) VALUES
+('LM20-0001', '2020-04-03 16:57:35', '2020-04-03 16:57:35', 'cycle-GAN', 'cycle-GAN입니다.', 'Y'),
+('LM20-0002', '2020-04-03 16:57:35', '2020-04-03 16:57:35', 'pix2pix', 'pix2pix입니다.', 'Y');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `learning_model_params`
+--
+
+DROP TABLE IF EXISTS `learning_model_params`;
+CREATE TABLE `learning_model_params` (
+  `param_idx` int(11) NOT NULL,
+  `learning_model_cd` varchar(10) NOT NULL COMMENT '모델코드',
+  `param_nm` varchar(30) NOT NULL COMMENT '모델 파라미터 명',
+  `default_val` varchar(30) NOT NULL COMMENT '기본값'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='딥러닝 모델의 파라미터를 정의';
+
+--
+-- 테이블의 덤프 데이터 `learning_model_params`
+--
+
+INSERT INTO `learning_model_params` (`param_idx`, `learning_model_cd`, `param_nm`, `default_val`) VALUES
+(71, 'LM20-0001', 'GPU_IDS', '0'),
+(72, 'LM20-0001', 'INPUT_NC', '3'),
+(73, 'LM20-0001', 'n_epochs', '300'),
+(74, 'LM20-0001', 'n_epochs_decay', '300'),
+(75, 'LM20-0001', 'lr', '0.0002'),
+(76, 'LM20-0001', 'BATCH_SIZE', '1'),
+(77, 'LM20-0002', 'GPU_IDS', '0'),
+(78, 'LM20-0002', 'INPUT_NC', '3'),
+(79, 'LM20-0002', 'n_epochs', '100'),
+(80, 'LM20-0002', 'n_epochs_decay', '100'),
+(81, 'LM20-0002', 'lr', '0.0002'),
+(82, 'LM20-0002', 'BATCH_SIZE', '1');
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `learning_params`
+--
+
+DROP TABLE IF EXISTS `learning_params`;
+CREATE TABLE `learning_params` (
+  `learning_cd` varchar(10) NOT NULL COMMENT '학습 코드',
+  `learning_model_cd` varchar(10) NOT NULL COMMENT '모델 코드',
+  `GPU_IDS` varchar(11) NOT NULL COMMENT 'GPU 사용 0: 1번그래픽카드사용 1: 2번그래픽카드사용 0,1: 1번 2번그래픽카드 함께 사용 -1: CPU 사용(GPU사용안함)',
+  `INPUT_NC` int(11) NOT NULL COMMENT '3: RGB 1: Grayscale',
+  `n_epochs` int(11) NOT NULL COMMENT 'epoch 개수',
+  `n_epochs_decay` int(11) NOT NULL COMMENT 'epoch decay 개수',
+  `LR` float(10,5) NOT NULL COMMENT 'Learning rate'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='학습시 적용할 파라미터 값 정의';
+
+-- --------------------------------------------------------
+
+--
+-- 테이블 구조 `movie`
+--
+
+DROP TABLE IF EXISTS `movie`;
+CREATE TABLE `movie` (
+  `movie_cd` varchar(10) NOT NULL COMMENT '영상코드',
+  `create_tm` datetime DEFAULT NULL COMMENT '생성일시',
+  `update_tm` datetime DEFAULT NULL COMMENT '수정일시',
+  `movie_nm` varchar(100) NOT NULL COMMENT '영상명',
+  `remark` varchar(300) DEFAULT NULL COMMENT '설명',
+  `scenario_cd` varchar(10) NOT NULL COMMENT '시나리오코드. FIRE-화재, FLOOD-홍수, SNOW-폭설, TIDE-녹적조',
+  `learning_cd` varchar(10) NOT NULL COMMENT '학습코드',
+  `in_movie_type_cd` varchar(10) NOT NULL COMMENT '입력동영상유형코드. dat-dat, avi-avi, mpeg-mpeg',
+  `in_movie_frame_rate` int(11) NOT NULL COMMENT '입력동영상 초당프레임수',
+  `in_movie_nm` varchar(100) NOT NULL COMMENT '입력동영상명',
+  `in_movie_size_kb` int(11) NOT NULL COMMENT '입력동영상 크기(KB)',
+  `in_movie_save_path` varchar(256) NOT NULL COMMENT '입력동영상 저장 경로',
+  `in_movie_save_nm` varchar(256) NOT NULL COMMENT '입력동영상 저장 파일명',
+  `in_movie_web_url` varchar(256) NOT NULL,
+  `out_movie_nm` varchar(100) DEFAULT NULL COMMENT '출력동영상 명',
+  `out_movie_size_kb` int(11) DEFAULT NULL COMMENT '출력 동영상 크기',
+  `out_movie_save_path` varchar(256) DEFAULT NULL COMMENT '출력 동영상 저장 경로',
+  `out_movie_save_nm` varchar(256) DEFAULT NULL COMMENT '출력 동영상 저장 파일명',
+  `out_movie_web_url` varchar(256) DEFAULT NULL,
+  `movie_state_cd` varchar(10) NOT NULL COMMENT '동영상 생성 상태 : READY-준비, MAKING-생성중, DONE-완료, ERROR-오류',
+  `start_tm` datetime DEFAULT NULL COMMENT '생성 시작일시',
+  `end_tm` datetime DEFAULT NULL COMMENT '생성 종료일시',
+  `fid` float(10,3) DEFAULT NULL,
+  `fid_cd` varchar(10) NOT NULL DEFAULT 'READY',
+  `onen` varchar(10) NOT NULL DEFAULT 'READY',
+  `use_yn` varchar(1) NOT NULL DEFAULT 'Y' COMMENT '사용유무'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='생성 동영상 내용을 정의';
+
+--
+-- 덤프된 테이블의 인덱스
+--
+
+--
+-- 테이블의 인덱스 `common_cd`
+--
+ALTER TABLE `common_cd`
+  ADD PRIMARY KEY (`group_cd`,`common_cd`);
+
+--
+-- 테이블의 인덱스 `dataset`
+--
+ALTER TABLE `dataset`
+  ADD PRIMARY KEY (`dataset_cd`);
+
+--
+-- 테이블의 인덱스 `learning`
+--
+ALTER TABLE `learning`
+  ADD PRIMARY KEY (`learning_cd`);
+
+--
+-- 테이블의 인덱스 `learning_model`
+--
+ALTER TABLE `learning_model`
+  ADD PRIMARY KEY (`learning_model_cd`);
+
+--
+-- 테이블의 인덱스 `learning_model_params`
+--
+ALTER TABLE `learning_model_params`
+  ADD PRIMARY KEY (`param_idx`);
+
+--
+-- 테이블의 인덱스 `learning_params`
+--
+ALTER TABLE `learning_params`
+  ADD PRIMARY KEY (`learning_cd`,`learning_model_cd`);
+
+--
+-- 테이블의 인덱스 `movie`
+--
+ALTER TABLE `movie`
+  ADD PRIMARY KEY (`movie_cd`);
+
+--
+-- 덤프된 테이블의 AUTO_INCREMENT
+--
+
+--
+-- 테이블의 AUTO_INCREMENT `learning_model_params`
+--
+ALTER TABLE `learning_model_params`
+  MODIFY `param_idx` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

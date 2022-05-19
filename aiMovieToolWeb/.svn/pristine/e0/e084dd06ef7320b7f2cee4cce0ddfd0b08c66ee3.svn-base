@@ -1,0 +1,584 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<%
+
+var resData       = tranData.data;
+
+%>
+
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>CV Studio</title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!--link href="/css/style.css" rel="stylesheet"-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!--
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    -->
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+    <!-- Page level plugins -->
+    <script src="/vendor/chart.js/Chart.min.js"></script>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../../js/html5.js"></script><![endif]-->
+
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javaScript">
+
+    // 초기화
+    $(document).ready(function (){
+
+        $("#dsize").html("<%= resData.dsize %>");
+        $("#lsize").html("<%= resData.lsize %>");
+        //$("#msize").html("<%= resData.msize %>");
+        //$("#mlist").html("<%= resData.mlist %>");
+
+        //$("#ldone").html("<%= resData.ldone %>");
+        //$("#lready").html("<%= resData.lready %>");
+
+        //$("#vmodel").html("<%= resData.vmodel %>");
+        $("#vsize").html("<%= resData.vsize %>");
+        //$("#vcd").html("<%= resData.vcd %>");
+        //$("#vdone").html("<%= resData.vdone %>");
+
+
+        var dfire = "<%= resData.dfire %>";
+        var dsnow = "<%= resData.dsnow %>";
+        var dtide = "<%= resData.dtide %>";
+        var dflood = "<%= resData.dflood %>";
+        var dother = "<%= resData.dother %>";
+
+        var ctx = document.getElementById("myPieChart");
+        var myPieChart = new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: ["화재", "폭설", "녹.적조", "홍수", "기타"],
+            datasets: [{
+              data: [dfire, dsnow, dtide, dflood, dother],
+              backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#fd7e14', '#858796'],
+              hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#de7014', '#777987'],
+              hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+          },
+          options: {
+            maintainAspectRatio: false,
+            tooltips: {
+              backgroundColor: "rgb(255,255,255)",
+              bodyFontColor: "#858796",
+              borderColor: '#dddfeb',
+              borderWidth: 1,
+              xPadding: 15,
+              yPadding: 15,
+              displayColors: false,
+              caretPadding: 10,
+            },
+            legend: {
+              display: false
+            },
+            cutoutPercentage: 80,
+          },
+        });
+
+
+
+
+    });
+
+    </script>
+</head>
+
+<body id="page-top">
+
+  <body id="page-top">
+
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+          <!-- Topbar -->
+          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+            <!-- Sidebar Toggle (Topbar) -->
+            <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+              <i class="fa fa-bars"></i>
+            </button> -->
+            <!-- Topbar Menubar -->
+
+
+            <div class="menu-nav">
+              <%- include('../common/menu'); -%>
+
+
+            </div>
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+
+              <!-- Nav Item - User Information
+              <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                  <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                </a>
+                -->
+                <!-- Dropdown - User Information
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Profile
+                  </a>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Settings
+                  </a>
+                  <a class="dropdown-item" href="#">
+                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Activity Log
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Logout
+                  </a>
+                </div>
+              </li>
+              -->
+
+            </ul>
+
+          </nav>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">HOME</h1>
+              <a href="/dataset/management/create" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                  <i class="fas fa-flag"></i>
+                </span>
+                <span class="text">Create Dataset</span>
+              </a>
+            </div>
+
+            <!-- Content Row -->
+            <div class="row">
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Datasets</div>
+                        <div id="dsize" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tasks</div>
+                        <div id=lsize class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Earnings (Monthly) Card Example -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Test</div>
+                        <div id="vsize" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Content Row -->
+
+            <div class="row">
+
+              <!-- Area Chart -->
+              <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">최근 학습 현황</h6>
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th>Code</th>
+                            <th>Task name</th>
+                            <th>Dataset</th>
+                            <th>Start date</th>
+                            <th>Finish date</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+
+                          <script>
+
+                          var llist = JSON.parse('<%- JSON.stringify(resData.llist) %>');
+
+                          if(llist.length == 0) {
+                            document.write("<tr><td>" + "조회된 내용이 없습니다." + "</td></tr>" );
+                          }
+
+                          for(var i = 0; i<llist.length ; i++) {
+
+                            if(i >= 5) {
+                              break;
+                            }
+
+                            document.write("<tr>");
+
+
+                            document.write("<td>" + llist[i].learning_cd + "</td>");
+
+                            document.write("<td>" + llist[i].learning_nm + "</td>");
+
+                            document.write("<td>" + llist[i].dataset_cd + "</td>");
+
+                            document.write("<td>" + llist[i].start_tm_desc + "</td>");
+
+
+                            if( llist[i].end_tm_desc == null) {
+                              document.write("<td>" + "</td>");
+                            }
+                            else {
+                              document.write("<td>" + llist[i].end_tm_desc + "</td>");
+                            }
+
+
+
+
+                            document.write("<td>");
+
+                            if(llist[i].learning_state_cd == "DONE") {
+                              document.write("<div class=\"badge badge-primary badge-pill\">" + "완료" + "</div>");
+                            }
+                            else {
+                              document.write("<div class=\"badge badge-warning badge-pill\">" + "학습중" + "</div>");
+                            }
+
+                            document.write("</td></tr>");
+                            //document.write(llist[i].learning_state_cd);
+
+                          }
+                          </script>
+                          <!--
+                          <tr>
+                            <td>L20-0118</td>
+                            <td>UNITY_sin 폭설테스트</td>
+                            <td>Cycle-GAN</td>
+                            <td>2020.09.02 15:10:14</td>
+                            <td> </td>
+                            <td><div class="badge badge-warning badge-pill">학습중</div></td>
+                          </tr>
+                          <tr>
+                            <td>L20-0117</td>
+                            <td>산불 batch3 에러테스트</td>
+                            <td>Cycle-GAN</td>
+                            <td>2020.08.31 17:07:46</td>
+                            <td>2020.09.01 23:15:44</td>
+                            <td><div class="badge badge-primary badge-pill">완료</div></td>
+                          </tr>
+                          <tr>
+                            <td>L20-0115</td>
+                            <td>UNITY 폭설 테스트</td>
+                            <td>Cycle-GAN</td>
+                            <td>2020.08.21 17:24:45</td>
+                            <td>2020.08.24 13:38:23</td>
+                            <td><div class="badge badge-primary badge-pill">완료</div></td>
+                          </tr>
+                          <tr>
+                            <td>L20-0006	</td>
+                            <td>녹적조CycleGan</td>
+                            <td>Cycle-GAN</td>
+                            <td>2020.06.17 15:53:26	</td>
+                            <td>2020.06.17 20:19:07	</td>
+                            <td><div class="badge badge-primary badge-pill">완료</div></td>
+                          </tr>
+                          <tr>
+                            <td>L20-0003	</td>
+                            <td>폭설cycleGAN	[LM20</td>
+                            <td>Cycle-GAN</td>
+                            <td>2020.05.06 18:00:45</td>
+                            <td>2020.05.06 20:01:43</td>
+                            <td><div class="badge badge-primary badge-pill">완료</div></td>
+                          </tr>
+                        -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Pie Chart -->
+              <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                  <!-- Card Header - Dropdown -->
+                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">데이터셋 현황</h6>
+                    <!--
+                    <div class="dropdown no-arrow">
+
+                      <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                      </a>
+
+                      <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                        <div class="dropdown-header">Dropdown Header:</div>
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                      </div>
+
+                    </div>
+                    -->
+                  </div>
+                  <!-- Card Body -->
+                  <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                      <canvas id="myPieChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center small">
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-primary"></i> 화재
+                      </span>
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-success"></i> 폭설
+                      </span>
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-info"></i> 녹.적조
+                      </span>
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-org"></i> 홍수
+                      </span>
+                      <span class="mr-2">
+                        <i class="fas fa-circle text-secondary"></i> 기타
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+        <!--
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; Your Website 2020</span>
+            </div>
+          </div>
+        -->
+        </footer>
+        <!-- End of Footer -->
+
+      </div>
+      <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+            <a class="btn btn-primary" href="login.html">Logout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    -->
+
+
+    <!--
+
+        <div id="wrap">
+
+            <div id="header">
+
+
+
+            </div>
+
+            <div id="container" class="">
+
+                <div id="contents">
+                    <h2>메인<span>Home > 메인</span></h2>
+
+                    <div class="cboth"></div>
+
+                    <div class="search">
+                        <legend class="invisible">Dataset 정보</legend>
+                        <h3>* Dataset 정보</h3>
+                        <table>
+                            <colgroup>
+                               <col style="width: 20%;" />
+                               <col style="width: 30%;" />
+                               <col style="width: 20%;" />
+                               <col />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>등록 건 </th>
+                                    <td id="dsize" class="txetR pr10"></td>
+                                    <th>학습 건</th>
+                                    <td id="lsize" class="txetR pr10"></td>
+                                </tr>
+                                <tr>
+                                    <th>등록 모델 개수</th>
+                                    <td id="msize" class="txetR pr10"></td>
+                                    <th>등록 모델</th>
+                                    <td id="mlist" class="txetR pr10"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="search">
+                        <legend class="invisible">학습정보</legend>
+                        <h3>* 학습 정보</h3>
+                        <table>
+                            <colgroup>
+                               <col style="width: 20%;" />
+                               <col style="width: 30%;" />
+                               <col style="width: 20%;" />
+                               <col />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>진행 중 </th>
+                                    <td id="lready" class="txetR pr10"></td>
+                                    <th>완료</th>
+                                    <td id="ldone" class="txetR pr10"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="search">
+                        <legend class="invisible">영상 정보</legend>
+                        <h3>* 영상 정보</h3>
+                        <table>
+                            <colgroup>
+                                <col style="width: 20%;" />
+                                <col style="width: 30%;" />
+                                <col style="width: 20%;" />
+                                <col />
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>최근 사용 모델 </th>
+                                    <td id="vmodel" class="txetR pr10"></td>
+                                    <th>최근 생성 시나리오 </th>
+                                    <td id="vcd" class="txetR pr10"></td>
+                                </tr>
+                                <tr>
+                                    <th>등록 건</th>
+                                    <td id="vsize" class="txetR pr10"></td>
+                                    <th>생성 건</th>
+                                    <td id="vdone" class="txetR pr10"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+
+
+    -->
+      <%- include('../common/copyright'); -%>
+</body>
+
+
+
+
+
+
+</html>

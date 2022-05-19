@@ -1,0 +1,569 @@
+<%
+
+var resData       = tranData.data;
+var pageNo        = resData.pageNo;
+var totalCnt      = resData.totalCnt;
+var listPerPage   = resData.listPerPage;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>CV Studio</title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Custom fonts for this template -->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Custom styles for this page -->
+    <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="/js/demo/datatables-demo.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+
+    <!--
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> -->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../js/html5.js"></script><![endif]-->
+
+    <script src="/js/jsUser.js"></script>
+    <script src="/js/common.js" type="text/javaScript"></script>
+    <script type="text/javaScript">
+
+    // 초기화
+    $(document).ready(function (){
+
+        // 생성 화면으로 이동
+        //$("#btnCreateDataset").click(function(){
+        //  location.href   = "/dataset/management/create";
+        //});
+        /*
+        // 페이지 당 조회 건 수 변경
+        $("#slcListPerPage").change(function(){
+          $("#txtPageNo").val(1);
+          fnSubmitList();
+        });
+
+        // 화면 초기화
+        $("#spnTotalCnt").html("<%= totalCnt %>");
+        $("#txtPageNo").val("<%= pageNo %>");
+        $("#slcListPerPage").val("<%= listPerPage %>");
+        $("#lblListPerPage").text($("#slcListPerPage option:selected").text());
+
+        // paging 변수 설정
+        pg_pageNoObjectId   = "txtPageNo";
+        pg_submitFuncObject = fnSubmitList; */
+
+    });
+
+    // 변경된 설정값으로 재 조회
+    function fnSubmitList(){
+      $("#frmPage").attr("action","/dataset/management/list");
+      $("#frmPage").attr("method","POST");
+      $("#frmPage").submit();
+    }
+
+    // 상세 Dataset 화면으로 이동
+    function fnMoveToDetail(thisATag, datasetCd){
+      $("#txtDatasetCd").val(datasetCd);
+
+      $("#frmPage").attr("action","/dataset/management/update");
+      $("#frmPage").attr("method","POST");
+      $("#frmPage").submit();
+    }
+
+    // 폐기
+    function fnRemove(thisATag, datasetCd){
+      if (!confirm("삭제하면 복구할 수 없습니다. 정말 삭제하시겠습니까?"))
+        return;
+
+      $("#txtDatasetCd").val(datasetCd);
+
+      $("#frmPage").attr("action","/dataset/management/delete");
+      $("#frmPage").attr("method","POST");
+      $("#frmPage").submit();
+    }
+
+    </script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button> -->
+          <!-- Topbar Menubar -->
+          <div class="menu-nav">
+          <%- include('../common/menu'); -%>
+
+          </div>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <!--
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+              <- Dropdown - User Information ->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            -->
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">Datasets > Dataset List</h1>
+          <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
+          <div class="my-2">
+            <a href="/dataset/management/create" class="btn btn-primary btn-icon-split">
+              <span class="icon text-white-50">
+                <i class="fas fa-flag"></i>
+              </span>
+              <span class="text">Create new dataset</span>
+            </a>
+          </div>
+
+          <form id="frmPage">
+
+             <input type="hidden" name="txtDatasetCd" id="txtDatasetCd" />
+
+          </form>
+
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <!-- <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Dataset List</h6>
+            </div> -->
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead style="text-align: center;">
+                    <tr class="table-thead">
+                      <th rowspan="2">No</th>
+                      <th rowspan="2">Code</th>
+                      <th rowspan="2">Dataset명</th>
+                      <th rowspan="2">시나리오</th>
+                      <th colspan="3">비율</th>
+                      <th rowspan="2">이미지 사이즈</th>
+                      <th rowspan="2">이미지 타입</th>
+                      <th rowspan="2">생성일자</th>
+                      <th rowspan="2">처리</th>
+                    </tr>
+                    <tr class="table-thead">
+                      <th>학습</th>
+                      <th>검증</th>
+                      <th>시험</th>
+                    </tr>
+                  </thead>
+                  <!-- <tfoot>
+                    <tr>
+                      <th>Code</th>
+                      <th>Taske name</th>
+                      <th>Network</th>
+                      <th>Start data</th>
+                      <th>Finish date</th>
+                      <th>Progress</th>
+                    </tr>
+                  </tfoot> -->
+                  <tbody>
+                    <%
+                    if (totalCnt == 0){
+                    %>
+                                            <tr>
+                                              <td colspan="11" class="txetc">조회된 내용이 없습니다.</td>
+                                            </tr>
+                    <%
+                    }
+                    else {
+                      var eachRow;
+                      for (var i=0; i<resData.listData.length; i++){
+                        eachRow  = resData.listData[i];
+                    %>
+                                            <tr>
+                                              <td><%= i+1 %></td>
+                                              <td><a href='javascript:fnMoveToDetail(this, "<%= eachRow.dataset_cd %>");'><%= eachRow.dataset_cd %></a></td>
+                                              <td><%= eachRow.dataset_nm %></td>
+                                              <td><%= eachRow.scenario_nm %></td>
+                                              <td><%= eachRow.use_learning_rate %></td>
+                                              <td><%= eachRow.use_verify_rate %></td>
+                                              <td><%= eachRow.use_test_rate %></td>
+                                              <td><%= eachRow.img_hor_px %>*<%= eachRow.img_ver_px %></td>
+                                              <td><%= eachRow.img_type_nm %></td>
+                                              <td><%= eachRow.create_tm_desc %></td>
+                                              <td><a href='javascript:fnRemove(this, "<%= eachRow.dataset_cd %>");'><button class="btn"><i class="svg-trash2" data-feather="trash-2"></i></button></a></td>
+                                            </tr>
+                    <%
+                      }
+                    }
+                    %>
+
+
+                    <!--
+                    <tr>
+                      <td>1</td>
+                      <td><a href="detailDataset.html">L20-0001</a></td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>1</td>
+                      <td>L20-0001</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>L20-0001</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>L20-0001</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>L20-0001</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>L20-0001</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>L20-0001</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>화재</td>
+                      <td>70</td>
+                      <td>20</td>
+                      <td>10</td>
+                      <td>1000*1000</td>
+                      <td>RGB</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                  -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+
+        <!--
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>
+      -->
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+
+  <!--
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+-->
+
+  <!-- Delete Modal--> <!--
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Warning</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">삭제하면 복구할 수 없습니다. 정말 삭제하시겠습니까?</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">취소</button>
+          <a class="btn btn-danger" href="datasetList.html">삭제</a>
+        </div>
+      </div>
+    </div>
+  </div>
+-->
+
+  <!--
+
+    <div id="wrap">
+
+        <div id="header">
+
+        </div>
+
+        <div id="container" class="">
+
+            <div id="contents">
+                <h2>Dataset 목록<span>Home > Dataset > Dataset 목록</span></h2>
+
+                <div class="cboth"></div>
+
+                <div class="listcasetit">
+                    <h3>* 총건수 <span id="spnTotalCnt">1</span> 건
+                    </h3>
+                    <div class="listcasebtn">
+
+                        <form id="frmPage">
+                        <button type="button" id="btnCreateDataset" class="btnType06 btnImg02">신규 Dataset 생성</button>
+                        <div class="selectboxJQ">
+                           <input type="hidden" name="txtPageNo" id="txtPageNo" />
+                           <input type="hidden" name="txtDatasetCd" id="txtDatasetCd" />
+                           <label id="lblListPerPage" for="slcListPerPage"></label>
+                           <select name="slcListPerPage" id="slcListPerPage">
+                             <option value="10">10개씩</option>
+                             <option value="20">20개씩</option>
+                             <option value="30">30개씩</option>
+                             <option value="40">40개씩</option>
+                             <option value="50">50개씩</option>
+                          </select>
+                        </div>
+                        </form>
+                    </div>
+
+                    <div class="scroll-tbl_x">
+                    <table class="board-list" style="width: 100%;" summary="Dataset 조회리스트입니다.">
+                      <colgroup>
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th rowspan=2>NO</th>
+                          <th rowspan=2>Dataset코드</th>
+                          <th rowspan=2>Dataset명</th>
+                          <th rowspan=2>시나리오</th>
+                          <th colspan=3>용도별비율</th>
+                          <th rowspan=2>이미지사이즈</th>
+                          <th rowspan=2>이미지타입</th>
+                          <th rowspan=2>생성일자</th>
+                          <th rowspan=2>처리</th>
+                        </tr>
+                        <tr>
+                          <th style="border-left:1px solid #dcdcdc;">학습</th>
+                          <th>검증</th>
+                          <th>시험</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+<%
+if (totalCnt == 0){
+%>
+                        <tr>
+                          <td colspan="11" class="txetc">조회된 내용이 없습니다.</td>
+                        </tr>
+<%
+}
+else {
+  var eachRow;
+  for (var i=0; i<resData.listData.length; i++){
+    eachRow  = resData.listData[i];
+%>
+                        <tr>
+                          <td><%= (pageNo - 1)*listPerPage + i+1 %></td>
+                          <td><a href='javascript:fnMoveToDetail(this, "<%= eachRow.dataset_cd %>");' class="listA"><%= eachRow.dataset_cd %></a></td>
+                          <td><%= eachRow.dataset_nm %></td>
+                          <td><%= eachRow.scenario_nm %></td>
+                          <td><%= eachRow.use_learning_rate %></td>
+                          <td><%= eachRow.use_verify_rate %></td>
+                          <td><%= eachRow.use_test_rate %></td>
+                          <td><%= eachRow.img_hor_px %>*<%= eachRow.img_ver_px %></td>
+                          <td><%= eachRow.img_type_nm %></td>
+                          <td><%= eachRow.create_tm_desc %></td>
+                          <td><a href='javascript:fnRemove(this, "<%= eachRow.dataset_cd %>");' class="listA" >폐기</a></td>
+                        </tr>
+<%
+  }
+}
+%>
+                      </tbody>
+                  </table>
+                  </div>
+
+                    <%- include('../common/paging'); -%>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+      -->
+        <%- include('../common/copyright'); -%>
+</body>
+
+<script>
+  feather.replace()
+</script>
+
+</html>

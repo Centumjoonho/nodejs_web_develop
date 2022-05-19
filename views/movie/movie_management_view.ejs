@@ -1,0 +1,475 @@
+<%
+
+var resData       = tranData.data;
+var detailData    = resData.detailData[0];
+var pageNo        = resData.pageNo;
+var listPerPage   = resData.listPerPage;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>CV Studio</title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> <!--
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> -->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../../js/html5.js"></script><![endif]-->
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+      <script src="https://unpkg.com/feather-icons"></script>
+
+    <script src="/js/common.js" type="text/javaScript"></script>
+    <script type="text/javaScript">
+
+    // 초기화
+    $(document).ready(function (){
+      
+
+
+      $("#btnDel").click(function(){
+         if (!confirm("폐기하시겠습니까?"))
+            return;
+
+         $("#frmPage").attr("action","/movie/management/delete");
+         $("#frmPage").attr("method","POST");
+         $("#frmPage").submit();
+      });
+
+        // 리스트 출력 화면으로 이동
+        $("#btnList").click(function(){
+            $("#frmPage").attr("action","/movie/management/list");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        $("#btnFid").click(function(){
+            $("#btnFid").hide();
+            $("#frmPage").attr("action","/movie/management/fid");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        $("#btnOneN").click(function(){
+            $("#btnOneN").hide();
+            $("#frmPage").attr("action","/movie/management/onen");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        // 화면 초기화
+        $("#txtPageNo").val("<%= pageNo %>");
+        $("#slcListPerPage").val("<%= listPerPage %>");
+
+        $("#txtMovieCd").val("<%= detailData.movie_cd %>");
+        $("#txtScenarioCd").val("<%= detailData.scenario_cd %>");
+        $("#txtLearningCd").val("<%= detailData.learning_cd %>");
+
+        $("#spnMovieCd").val("<%= detailData.movie_cd %>");
+        $("#spnMovieNm").val("<%= detailData.movie_nm %>");
+        $("#spnRemark").val("<%= detailData.remark %>");
+        $("#spnStartTmDesc").val("<%= detailData.start_tm_desc %>");
+        $("#spnEndTmDesc").val("<%= detailData.end_tm_desc %>");
+        $("#spnInMovieTypeCd").val("<%= detailData.in_movie_type_cd %>");
+        $("#ankInMovieUrl").attr("href", "<%= resData.downloadUrl + resData.movieCd + '/IN' %>");
+        $("#ankInMovieUrl").html("<%= detailData.in_movie_nm %>");
+        $("#spnScenarioNm").val("<%= detailData.scenario_nm %>");
+
+        if("<%= detailData.in_movie_frame_rate %>" == 0){
+          $("#spnInMovieFrameRate").val("없음");
+        }
+        else {
+          $("#spnInMovieFrameRate").val("<%= detailData.in_movie_frame_rate %>");
+        }
+
+        /*
+        if("<%= detailData.fid_cd %>" == "READY"){
+          $("#spnFid").val("평가 전");
+        }
+        else if("<%= detailData.fid_cd %>" == "DONE") {
+          $("#spnFid").val("<%= detailData.fid %>");
+          $("#btnFid").hide();
+        }
+        else if("<%= detailData.fid_cd %>" == "MAKING") {
+          $("#spnFid").val("평가 중");
+          $("#btnFid").hide();
+        }
+        else{
+          $("#spnFid").val("오류");
+          $("#btnFid").hide();
+        }
+        */
+        if("<%= detailData.onen %>" == "READY"){
+          $("#spnOneN").val("생성 전");
+        }
+        else if("<%= detailData.onen %>" == "DONE") {
+          $("#spnOneN").val("생성 완료");
+          $("#btnOneN").hide();
+
+          $("#downUrl3").attr("href", "<%= resData.downloadUrl + resData.movieCd +'/3' %>");
+          $("#downUrl3").html("<%=detailData.movie_cd%>" + "_3." + "<%=detailData.in_movie_type_cd%>")
+          $("#downUrl4").attr("href", "<%= resData.downloadUrl + resData.movieCd +'/4' %>");
+          $("#downUrl4").html("<%=detailData.movie_cd%>" + "_4." + "<%=detailData.in_movie_type_cd%>")
+          $("#downUrl5").attr("href", "<%= resData.downloadUrl + resData.movieCd +'/5' %>");
+          $("#downUrl5").html("<%=detailData.movie_cd%>" + "_5." + "<%=detailData.in_movie_type_cd%>")
+        }
+        else if("<%= detailData.onen %>" == "MAKING") {
+          $("#spnOneN").val("생성 중");
+          $("#btnOneN").hide();
+        }
+        else{
+          $("#spnOneN").val("생성 오류");
+          $("#btnOneN").hide();
+        }
+
+        //$("#spnInMovieFrameRate").text("<%= detailData.in_movie_frame_rate %>");
+        $("#spnLearning").val("[<%= detailData.learning_cd %>]<%= detailData.learning_nm %>");
+        $("#txtLearningCd").val("<%= detailData.learning_cd %>");
+        if( "<%= detailData.end_tm_desc %>" != "") {
+          //$("#downUrl").attr("href", "../../" + "<%=detailData.movie_cd%>" + "/" + "<%=detailData.movie_cd%>" + "." + "<%=detailData.in_movie_type_cd%>");
+          $("#downUrl").attr("href", "<%= resData.downloadUrl + resData.movieCd + '/OUT' %>");
+          $("#downUrl").html("<%=detailData.movie_cd%>" + "." + "<%=detailData.in_movie_type_cd%>")
+        }
+        else {
+          //setTimeout(function() {
+          //  fnRefresh();
+          //},5000);
+        }
+
+        if("<%= resData.imageCheck %>" == "good") {
+
+          $("#image").attr("src", "../../" + "<%= detailData.movie_cd %>" + "/before/" + "<%= detailData.in_movie_nm %>");
+          $("#image2").attr("src", "../../" + "<%= detailData.movie_cd %>" + "/after/predictions.jpg");
+
+        }
+
+    });
+
+    
+
+</script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button> -->
+          <!-- Topbar Menubar -->
+          <div class="menu-nav">
+
+
+                <%- include('../common/menu'); -%>
+          </div>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <!--
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div> -->
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <form id="frmPage">
+
+          <!-- Content Row -->
+            <div class="row">
+                <!-- Account details card-->
+                <div class="card mb-4" style="margin:auto; width:80%">
+                    <div class="card-header" style="background-color: rgb(78, 115, 223); color: #fff; text-align: center; font-size: 1.2rem;"><b>테스트 결과</b></div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">테스트코드</label>
+                                <input class="form-control" id="txtMovieCd" name ="txtMovieCd" readonly type="text"  value="" readonly />
+                              </div>
+                              <div class="form-group col-md-3">
+                                <label class="small mb-1">영상종류</label>
+                                <input class="form-control" id="txtScenarioCd" name ="txtScenarioCd" readonly type="text"  value="" readonly />
+                              </div>
+                              <div class="form-group col-md-3">
+                                <label class="small mb-1">학습모델</label>
+                                <input class="form-control" id="txtLearningCd" name ="txtLearningCd" readonly type="text"  value="" readonly />
+                              </div>
+                            </div>
+
+                            <input id="txtLearningCd" name ="txtLearningCd" readonly type="hidden"  value="" readonly />
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">데이터명</label>
+                                <input class="form-control"  id="spnMovieNm" type="text"  value="" readonly />
+                              </div>
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">시작시간</label>
+                                <input class="form-control" id="spnStartTmDesc" type="text"  value="" readonly />
+                             </div>
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                  <label class="small mb-1" for="spnRemark">상세정보</label>
+                                  <input class="form-control" id="spnRemark" type="text" value="" readonly />
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label class="small mb-1">종료시간</label>
+                                    <input class="form-control" id="spnEndTmDesc" type="text"  value="" readonly />
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">원본 이미지</label>
+                                <div class="form-control" style="height:300px;  display: flex; justify-content: center; align-items: center;" >
+                                  <img src="" style="height: 80%;"  id="image" />
+                                </div>
+                              </div>
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">추론 결과 이미지</label>
+                                <div class="form-control" style="height:300px;  display: flex; justify-content: center; align-items: center;">
+                                    <img src="" style="height: 80%;" id="image2" />
+                                </div>
+                              </div>
+                              <div style="margin: auto;">
+                                <button class="btn" type="button" id="btnPrev"><i data-feather="arrow-left"></i></button>
+                                <span id="imageText"></span>
+                                <button class="btn svg-arrow-right" type="button" id="btnNext"><i data-feather="arrow-right"></i></button>
+                              </div>
+                            </div>
+                            <!-- Save changes button-->
+                            <button class="btn btn-danger" type="button" id="btnDel" style="float: right; display: flex; margin-left: 5px;">삭제</button>
+                            <button class="btn btn-info" type="button" id="btnList" style="float: right; display: flex;">목록</button>
+                        </form>
+                    </div>
+                </div>
+          </div>
+        </form>
+          <!-- Content Row -->
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <!--
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>-->
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!--
+    <div id="wrap">
+        <div id="header">
+        </div>
+        <div id="container" class="">
+
+            <div id="contents">
+                <form id="frmPage">
+                <h2>시험 상세<span>Home > 추론(시험) > 시험 목록 > 시험 상세</span></h2>
+
+                <div class="cboth"></div>
+
+                <div class="search">
+                    <legend class="invisible">기본 정보</legend>
+                    <h3>* 기본 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>시험 코드 </th>
+                                <td >
+                                    <input name="txtPageNo" id="txtPageNo" type="hidden"  />
+                                    <input name="slcListPerPage" id="slcListPerPage" type="hidden"  />
+                                    <input type="hidden" name="txtMovieCd" id="txtMovieCd" />
+                                    <span id="spnMovieCd"></span>
+                                </td>
+                                <th>시험명</th>
+                                <td><span id="spnMovieNm"></span></td>
+                            </tr>
+                            <tr>
+                                <th>설명</th>
+                                <td colspan="3"><span id="spnRemark"></span></td>
+                            </tr>
+                            <tr>
+                                <th>시작일시</th>
+                                <td><span id="spnStartTmDesc"></span></td>
+                                <th>종료일시</th>
+                                <td><span id="spnEndTmDesc"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">시험 정보</legend>
+                    <h3>* 시험 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>적용파일</th>
+                                <td><a class="download_a" id="ankInMovieUrl" href=""></a></td>
+                                <th>시험포멧</th>
+                                <td><span id="spnInMovieTypeCd"></td>
+
+                            </tr>
+                            <tr>
+                              <th>생성된 영상</th>
+                              <td><a class="download_a" id="downUrl" href=""></a>  </td>
+                                <th>시나리오</th>
+                                <td><span id="spnScenarioNm"></span></td>
+                            </tr>
+                            <tr>
+                                <th>적용학습</th>
+                                <td><span id="spnLearning"></span></td>
+                                <th>Frame Rate</th>
+                                <td><span id="spnInMovieFrameRate"></span></td>
+                            </tr>
+                            <tr  style="height: 500px;">
+
+                                <video id="myVideo" controls autoplay>
+                                <source src="../../M20-0040/M20-0042.MP4" type="video/mpeg">
+                                동영상을 지원하지 않는 브라우저입니다.
+                                </video>
+
+
+
+                                 <th>미리 보기<br>
+                                   <button class="btnImg18 btnType03s" type="button" id="btnPrev"></button>
+                                   <button class="btnImg19 btnType03s" type="button" id="btnNext"></button>
+                                 </th>
+
+                                  <td colspan="3">
+                                      <img src="" style="width: 45%;" id="image" />
+
+                                      <img src="" style="width: 45%;" id="image2" />
+                                      <br>
+                                      <span id="imageText"></span>
+
+                                  </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="txetR mt20 mb30">
+                       <button id="btnDel" class="btnImg12 btnType03s" type="button">폐기</button>
+                       <button id="btnList" class="btnImg12 btnType03s" type="button">리스트</button>
+                    </div>
+
+                </div>
+
+
+
+            </form>
+             </div>
+
+        </div>
+
+    </div> -->
+     <%- include('../common/copyright'); -%>
+     <script>
+       feather.replace()
+     </script>
+</body>
+</html>

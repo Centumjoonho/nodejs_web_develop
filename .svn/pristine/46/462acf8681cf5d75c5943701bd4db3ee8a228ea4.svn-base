@@ -1,0 +1,22 @@
+import sys
+import os
+#import time
+import subprocess
+
+
+print(sys.argv)
+
+print("PID:")
+print (os.getpid())
+
+dr = './'
+os.chdir(dr)
+
+pcall = subprocess.call([sys.executable, 'filter.py', 'country.acv', sys.argv[1], 'images3'])
+pcall = subprocess.call([sys.executable, 'filter.py', 'crossprocess.acv', sys.argv[1], 'images4'])
+pcall = subprocess.call([sys.executable, 'filter.py', 'desert.acv', sys.argv[1], 'images5'])
+
+
+
+
+# python -m pytorch_fid aiMovieToolWeb/data/datasets/D20-0033/trainB aiMovieToolWeb/data/movie/I20-0052/test_latest/images --batch-size 1

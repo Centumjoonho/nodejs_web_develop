@@ -1,0 +1,75 @@
+import sys
+import os
+#import time
+import subprocess
+import cv2
+import numpy as np
+
+from os.path import isfile, join
+
+def convert_frames_to_video(pathIn,pathOut,fps):
+    frame_array = []
+    files = [f for f in os.listdir(pathIn) if isfile(join(pathIn, f))]
+
+    #for sorting the file names properly
+    #files.sort(key = lambda x: int(x[5:-9]))
+    files.sort()
+
+    for i in range(len(files)):
+        #filename=pathIn + files[i]
+        if(files[i][-8:-4] == "fake"):
+            filename=pathIn + files[i]
+            #reading each files
+            img = cv2.imread(filename)
+            height, width, layers = img.shape
+            size = (width, height)
+            print(filename)
+            #inserting the frams into an image img_array
+            frame_array.append(img)
+
+    out = cv2.VideoWriter(pathOut, cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
+
+    for i in range(len(frame_array)):
+        #writing to a image img_array
+        out.write(frame_array[i])
+    out.release()
+
+
+print(sys.argv)
+
+print("PID:")
+print (os.getpid())
+
+#fname, fext = os.path.splitext(sys.argv[5])
+
+#if(fext.lower() == 'wmv' or fext.lower() == 'avi' or fext.lower() == 'mp4'):
+vidcap = cv2.VideoCapture(sys.argv[5])
+count = 0
+while(vidcap.isOpened()):
+    ret, image = vidcap.read()
+    if ret:
+        imagename = "./data/datasets/" + sys.argv[1] + "/testA/" + str(count).zfill(10) +".png";
+        cv2.imwrite(imagename, image)
+    else:
+        break;
+    #print('Saved frame%d.jpg' % count)
+    count += 1
+vidcap.release()
+
+
+dr = '../pytorch-CycleGAN-and-pix2pix/'
+os.chdir(dr)
+
+if(sys.argv[2] == 'LM20-0002') :
+    pcall = subprocess.call([sys.executable, 'test.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[1],'--name', sys.argv[1] ,'--model', 'test', '--no_dropout' ,'--netG', 'unet_256', '--norm','batch', '--results_dir', '../aiMovieToolWeb/data/movie/', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--preprocess', 'resize_and_crop', '--dataset_mode', 'single'] )
+else :
+    pcall = subprocess.call([sys.executable, 'test.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[1],'--name', sys.argv[1] ,'--model', 'test', '--no_dropout', '--results_dir', '../aiMovieToolWeb/data/movie/', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--dataset_mode', 'single',  '--load_size', '256', '--crop_size', '256', '--no_flip' ])
+
+'''
+if(sys.argv[4] == 'WMV' or sys.argv[4] == 'AVI' or sys.argv[4] == 'MP4'):
+    pathIn = "../aiMovieToolWeb/data/movie/" + sys.argv[1] + "/test_latest/images/"
+    #mp4, avi, wmv
+    pathOut = "../aiMovieToolWeb/data/movie/" + sys.argv[1] + "/" + sys.argv[1] + "." + sys.argv[4]
+    fps = int(sys.argv[5])
+    convert_frames_to_video(pathIn, pathOut, fps)
+'''

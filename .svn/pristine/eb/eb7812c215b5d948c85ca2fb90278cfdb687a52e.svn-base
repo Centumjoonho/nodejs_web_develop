@@ -1,0 +1,482 @@
+<%
+
+var resData         = tranData.data;
+var listScenario    = resData.listScenario;
+var listLearning    = resData.listLearning;
+var listInMovieType = resData.listInMovieType;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>CV Studio</title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> <!--
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../../js/html5.js"></script><![endif]-->
+
+    <style type="text/css">
+
+    .filebox input[type="file"] {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip:rect(0,0,0,0);
+        border: 0;
+    }
+
+    .filebox label {
+        display: inline-block;
+        padding: .5em .75em;
+        color: #999;
+        font-size: inherit;
+        line-height: normal;
+        vertical-align: middle;
+        background-color: #fdfdfd;
+        cursor: pointer;
+        border: 1px solid #ebebeb;
+        border-bottom-color: #e2e2e2;
+        border-radius: .25em;
+        margin: -1px;
+    }
+
+    /* named upload */
+    .filebox .upload-name {
+        display: inline-block;
+        padding: .5em .75em;
+        font-size: inherit;
+        font-family: inherit;
+        line-height: normal;
+        vertical-align: middle;
+        background-color: #f5f5f5;
+      border: 1px solid #ebebeb;
+      border-bottom-color: #e2e2e2;
+      border-radius: .25em;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    .filebox.bs3-primary label {
+      color: #fff;
+        background-color: #337ab7;
+        border-color: #2e6da4;
+    }
+
+
+    </style>
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+
+    <script src="/js/jsUser.js"></script>
+    <script src="/js/common.js" type="text/javaScript"></script>
+    <script type="text/javaScript">
+
+    // 초기화
+    $(document).ready(function (){
+        // 리스트 출력 화면으로 이동
+        $("#btnList").click(function(){
+            // location.href   = "/movie/management/list";
+            window.close();
+
+        });
+
+        // 입력 내용 저장
+        $("#btnSave").click(function(){
+            // 입력 내용 확인
+            if (!cf_checkNullAndGetFocus($("#txtMovieNm"), "데이터셋명을 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtRemark"), "상세 정보를 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#slcScenarioCd"), "영상종류를 선택해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#slcLearningCd"), "적용모델을 선택해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#inMovie"), "파일경로를 선택해 주세요."))   return;
+            //if (!cf_checkNullAndGetFocus($("#slcInMovieTypeCd"), "영상포멧을 선택해 주세요."))   return;
+            //if (!cf_checkNullAndGetFocus($("#txtInMovieFrameRate"), "Frame Rate를 입력해 주세요."))   return;
+
+            // 저장
+            if (!confirm("시작하시겠습니까?"))
+                return;
+
+            $("#frmPage").attr("action","/movie/management/createSave2");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        var fileTarget = $('.filebox .upload-hidden');
+
+        fileTarget.on('change', function(){
+        if(window.FileReader){
+            var filename = $(this)[0].files[0].name;
+        } else {
+            var filename = $(this).val().split('/').pop().split('\\').pop();
+        }
+
+        $(this).siblings('.upload-name').val(filename);
+      });
+
+
+        // 화면 초기화
+
+        // 시나리오 생성
+<%
+for (var i=0; i<listScenario.length; i++){
+%>
+        $("#slcScenarioCd").append("<option value='<%= listScenario[i].common_cd %>'><%= listScenario[i].common_nm %></option>");
+<%
+}
+%>
+        // 학습 건 생성. 없을 경우 시작 불가 처리
+<%
+if (listLearning.length == 0){
+%>
+        $("#btnSave").hide();
+        alert("적용학습이 없습니다. 영상 생성이 불가합니다.");
+<%
+}
+else {
+    for (var i=0; i<listLearning.length; i++){
+%>
+        $("#slcLearningCd").append("<option value='<%= listLearning[i].learning_cd %>'>[<%= listLearning[i].learning_cd %>]<%= listLearning[i].learning_nm %></option>");
+<%
+    }
+%>
+        $("#slcLearningCd option:eq(0)").prop("selected", true);
+<%
+}
+%>
+        // 동영상 타입 생성
+<%
+for (var i=0; i<listInMovieType.length; i++){
+%>
+        $("#slcInMovieTypeCd").append("<option value='<%= listInMovieType[i].common_cd %>'><%= listInMovieType[i].common_nm %></option>");
+<%
+}
+%>
+        // 초기값 설정
+        $("#slcScenarioCd option:eq(0)").prop("selected", true);
+        $("#slcInMovieTypeCd option:eq(0)").prop("selected", true);
+    });
+
+   </script>
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar ">
+          
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button> -->
+          <!-- Topbar Menubar -->
+          
+          <!-- Topbar Navbar -->
+          <!-- <ul class="navbar-nav ml-auto"> -->
+
+            <!-- Nav Item - User Information -->
+            <!-- <li class="nav-item dropdown no-arrow"> -->
+              <!--
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>-->
+            <!-- </li> -->
+
+          <!-- </ul> -->
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+          <form id="frmPage" enctype="multipart/form-data">
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800"> 의료영상 데이터 입력</h1>
+          </div>
+
+          <!-- Content Row -->
+            <div class="row">
+                <!-- Account details card-->
+                <div class="card mb-4" style="margin:auto">
+                    <div class="card-header" style="background-color: #0061f2; color: #fff">상세 정보</div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-8">
+                                <label class="small mb-1" for="txtMovieNm">데이터셋명</label>
+                                <label class="small mb-1" style="margin-left: 240px ;">영상종류</label> 
+                              </div>
+                              <div class="form-group col-md-4">
+                                <div class="form-check-inline">
+                                  <input class="form-control" name="txtMovieNm" id="txtMovieNm" type="text"  value="" style="width :300px; height: 40px ; margin-right:15px;"/>
+                                  <select class="form-control btn" name="slcScenarioCd" id="slcScenarioCd" style="width:150px; height: 40px;border: 1px solid rgb(192, 191, 191)"></select>
+                                </div>
+                                <!--
+                                <select class="form-control btn" name="slcScenarioCd" id="slcScenarioCd">
+                                  <option class="dropdown-item" value="FIRE">화재</option>
+                                  <option class="dropdown-item" value="SNOW">폭설</option>
+                                  <option class="dropdown-item" value="FLOOD">홍수</option>
+                                  <option class="dropdown-item" value="TIDE">녹,적조</option>
+                                </select> -->
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="small mb-1" for="txtRemark">데이터셋 상세 정보</label>
+                              <label class="small mb-1" style="margin-left: 200px ;">적용 모델</label>
+                             
+                            </div>
+                            <!-- Form Row-->
+
+                            <div class="form-row">
+                                <!-- Form Group (first name)-->
+                                <div class="form-group col-md-12">
+                                  <div class="form-check-inline">
+                                    <input class="form-control" name="txtRemark" id="txtRemark" type="text" value="" style="width :300px; height: 40px; margin-right:15px;" />
+                                    <select  class="form-control btn" name="slcLearningCd" id="slcLearningCd"style="width:150px; height: 40px; border: 1px solid rgb(192, 191, 191) ;"></select>
+                                   </div>
+                                     <!--
+                                    <select class="form-control btn">
+                                      <option class="dropdown-item">모델 1</option>
+                                      <option class="dropdown-item">모델 2</option>
+                                    </select>-->
+                                </div>
+                            </div>
+
+                           <!-- Form Row-->
+                            <div class="form-row">
+                                <div class="form-group col-md-12">
+                                  <div>
+                                  <label class="small mb-1">업로드 파일 선택</label></br>
+                                 </div>
+                                  <div class="filebox bs3-primary">
+                                      <label for="inMovie">업로드</label>
+                                      <input type="file" name="inMovie" id="inMovie" class="upload-hidden"  />
+                                      <input class="upload-name" value="선택안됨" size=32 disabled="disabled" style="margin-left: 15px; width: 375px;">
+                                  </div>
+                                  <label class="small mb-1"><span style="color:crimson">* </span>이미지들이 압축된 ZIP파일 혹은 WMV, AVI, MP4 동영상파일만 가능</label>
+                                </div>
+                            </div>
+
+                            <!-- Form Row--> <!--
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                  <label class="small mb-1">생성 동영상 포멧</label>
+                                   <select class="form-control btn" name="slcInMovieTypeCd" id="slcInMovieTypeCd"></select>
+
+                              </div>
+
+                              <div class="form-group col-md-6">
+                                  <label class="small mb-1">Frame Rate</label>
+                                  <input class="form-control" name="txtInMovieFrameRate" id="txtInMovieFrameRate" type="text"  placeholder="FPS"/>
+                              </div>
+                            </div> -->
+                            <!-- Save changes button-->
+                            <button class="btn btn-success" type="button" id="btnSave" style="margin-left:0px;">테스트 시작</button> <!--시작을 누르면 팝업창 나가져야함-->
+                            <button class="btn btn-info" type="button" id="btnList"style ="margin-left : 10px">취소</button>  <!--취소를 누르면 입력창 꺼지면 됌-->
+                        </form>
+                    </div>
+                </div>
+          </div>
+        </form>
+          <!-- Content Row -->
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <!-- <footer class="sticky-footer bg-white"> 
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>
+      </footer> -->
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <!-- <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a> -->
+
+  <!--
+    <div id="wrap">
+
+        <div id="header">
+
+        </div>
+
+        <div id="container" class="">
+
+            <div id="contents">
+            <form id="frmPage" enctype="multipart/form-data">
+                <h2>이미지 시험<span>Home > 추론(시험) > 이미지 시험</span></h2>
+
+                <div class="cboth"></div>
+
+                <div class="search">
+                    <legend class="invisible">기본 정보</legend>
+                    <h3>* 기본 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>시험명</th>
+                                <td><input name="txtMovieNm" id="txtMovieNm" type="text" class="text sizePer3" maxlength="50" value="홍수이미지제작" /></td>
+                                <th>설명</th>
+                                <td>
+                                  <input name="txtRemark" id="txtRemark" type="text" class="text sizePer4" maxlength="150" value="홍수 이미지를 제작합니다." />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">학습 정보</legend>
+                    <h3>* 학습 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>시나리오</th>
+                                <td>
+                                   <select name="slcScenarioCd" id="slcScenarioCd"></select>
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>적용학습</th>
+                                <td>
+                                   <select name="slcLearningCd" id="slcLearningCd"></select>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">적용 영상 정보</legend>
+                    <h3>* 적용 영상 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>적용파일경로</th>
+                                <td colspan="3">
+                                    <input type="file" name="inMovie" id="inMovie" class="sizeser10" class="uploadinput" />
+                                    이미지들이 압축된 ZIP파일 혹은 WMV·AVI·MP4 동영상파일만 가능합니다.
+                                </td>
+                            </tr> -->
+                            <!--
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>영상포멧</th>
+                                <td>
+                                   <select name="slcInMovieTypeCd" id="slcInMovieTypeCd"></select>
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>Frame Rate</th>
+                                <td><input name="txtInMovieFrameRate" id="txtInMovieFrameRate" type="text" class="text sizeser5 " value="30" />fps</td>
+                            </tr>
+                          --> <!--
+                        </tbody>
+                    </table>
+
+                    <div class="txetR mt20 mb30">
+                        <button class="btnImg13 btnType03s" type="button" id="btnSave">시작</button>
+                        <button class="btnImg12 btnType03s" type="button" id="btnList">리스트</button>
+
+                    </div>
+
+                </div>
+
+
+
+            </form>
+             </div>
+
+        </div>
+
+    </div> -->
+      
+</body>
+</html>

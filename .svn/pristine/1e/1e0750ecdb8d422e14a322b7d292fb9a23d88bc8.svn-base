@@ -1,0 +1,51 @@
+<%
+
+var resData       = tranData.data;
+var pageNo        = resData.pageNo;
+var totalCnt      = resData.totalCnt;
+var listPerPage   = resData.listPerPage;
+var pagePerPaging = resData.pagePerPaging;
+
+var totalPageNo = parseInt(totalCnt/listPerPage, 10);
+if (totalCnt%listPerPage != 0) totalPageNo++;
+
+var frIdx = parseInt((pageNo-1)/pagePerPaging, 10) + 1;
+var toIdx = frIdx + (pagePerPaging - 1);
+if (toIdx > totalPageNo) toIdx = totalPageNo;
+
+var frIdxBef  = frIdx-1;
+if (frIdxBef < 1) frIdxBef = frIdx;
+var toIdxAft  = toIdx+1;
+if (toIdxAft > totalPageNo) toIdxAft = totalPageNo;
+%>
+<script type="text/javaScript">
+
+var pg_pageNoObjectId = "";
+var pg_submitFuncObject  = null;
+
+function pg_moveToPage(pageNo){
+  $("#" + pg_pageNoObjectId).val(pageNo);
+  if (pg_submitFuncObject != null)
+    pg_submitFuncObject();
+}
+</script>
+                  <div class="paging">
+                        <a href="javascript:pg_moveToPage('1');" class="btnPrev1"></a>
+                        <a href="javascript:pg_moveToPage('<%= frIdxBef %>');" class="btnPrev mr10"></a>
+<%
+for (var i=frIdx; i<=toIdx; i++){
+  if (i == pageNo){
+%>
+                        <span><%= i %></span>
+<%
+  }
+  else {
+%>
+                        <a href="javascript:pg_moveToPage('<%= i %>');"><%= i %></a>
+<%
+  }
+}
+%>
+                        <a href="javascript:pg_moveToPage('<%= toIdxAft %>');" class="btnNext ml10"></a>
+                        <a href="javascript:pg_moveToPage('<%= totalPageNo %>');" class="btnNext1"></a>
+                    </div>

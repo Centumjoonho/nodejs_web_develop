@@ -1,0 +1,67 @@
+import sys
+import os
+#import time
+import subprocess
+
+'''
+def subprocess_open_when_shell_false(command):
+    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    (stdoutdata, stderrdata) = popen.communicate()
+    return stdoutdata, stderrdata
+
+def subprocess_open(command):
+    popen = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    (stdoutdata, stderrdata) = popen.communicate()
+    return stdoutdata, stderrdata
+'''
+
+print(sys.argv)
+
+print("PID:")
+print (os.getpid())
+
+dr = '../pytorch-CycleGAN-and-pix2pix/'
+os.chdir(dr)
+
+
+'''
+if(sys.argv[2] == 'LM20-0002') :
+    pcall = subprocess.call([sys.executable, 'train.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[8],'--name',sys.argv[1] ,'--model', 'pix2pix','--gpu_ids',sys.argv[3], '--input_nc',sys.argv[4], '--n_epochs', sys.argv[5], '--n_epochs_decay', sys.argv[6], '--lr', sys.argv[7], '--save_epoch_freq', '1', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--batch_size', sys.argv[9], '--display_id', '0', '--load_size', '1024' ])
+else :
+    pcall = subprocess.call([sys.executable, 'train.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[8],'--name',sys.argv[1] ,'--model', 'cycle_gan','--gpu_ids',sys.argv[3], '--input_nc',sys.argv[4], '--n_epochs', sys.argv[5], '--n_epochs_decay', sys.argv[6], '--lr', sys.argv[7], '--save_epoch_freq', '1', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--batch_size', sys.argv[9], '--display_id', '0' ])
+'''
+
+if(sys.argv[2] == 'LM20-0002') :
+    pcall = subprocess.call([sys.executable, 'train.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[8],'--name',sys.argv[1] ,'--model', 'pix2pix','--gpu_ids',sys.argv[3], '--input_nc',sys.argv[4], '--n_epochs', sys.argv[5], '--n_epochs_decay', sys.argv[6], '--lr', sys.argv[7], '--save_epoch_freq', '1', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--batch_size', sys.argv[9], '--display_id', '0'])
+#, '--load_size', '1024', '--crop_size', '256' ])
+else :
+    pcall = subprocess.call([sys.executable, 'train.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[8],'--name',sys.argv[1] ,'--model', 'cycle_gan','--gpu_ids',sys.argv[3], '--input_nc',sys.argv[4], '--n_epochs', sys.argv[5], '--n_epochs_decay', sys.argv[6], '--lr', sys.argv[7], '--save_epoch_freq', '1', '--checkpoints_dir', '/media/jysoft/9254476C54475261/aiMovieToolWeb/data/checkpoints/', '--batch_size', sys.argv[9], '--display_id', '0', '--preprocess', 'resize_and_crop'])
+#    pcall = subprocess.call([sys.executable, 'train.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[8],'--name',sys.argv[1] ,'--model', 'cycle_gan','--gpu_ids',sys.argv[3], '--input_nc',sys.argv[4], '--n_epochs', sys.argv[5], '--n_epochs_decay', sys.argv[6], '--lr', sys.argv[7], '--save_epoch_freq', '1', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--batch_size', sys.argv[9], '--display_id', '0', '--preprocess', 'crop'])
+
+#    pcall = subprocess.call([sys.executable, 'train.py', '--dataroot', '../aiMovieToolWeb/data/datasets/' + sys.argv[8],'--name',sys.argv[1] ,'--model', 'cycle_gan','--gpu_ids',sys.argv[3], '--input_nc',sys.argv[4], '--n_epochs', sys.argv[5], '--n_epochs_decay', sys.argv[6], '--lr', sys.argv[7], '--save_epoch_freq', '1', '--checkpoints_dir', '../aiMovieToolWeb/data/checkpoints/', '--batch_size', sys.argv[9], '--display_id', '0', '--preprocess', 'resize_and_crop', '--load_size', '256'])
+#, '--load_size', '1024', '--crop_size', '256' ])
+    #print (pcall.pid)
+
+
+#os.popen('train.py');
+#os.popen('../pytorch-CycleGAN-and-pix2pix/train.py');
+
+
+#f = open('test.py')
+#--dataroot ./datasets/cyclegan_test1 --name cyclegan_test1 --model test
+#exec(f.read(),'--dataroot ./datasets/cyclegan_test1')
+#f.close()
+
+#subprocess.call([sys.executable, 'train.py', '--dataroot', './datasets/cyclegan_test1','--name',sys.argv[1]])
+
+#subprocess.run(['test.py'], shell=True)
+#subprocess.call('../pytorch-CycleGAN-and-pix2pix/test.py')
+
+#subprocess_open_when_shell_false('../pytorch-CycleGAN-and-pix2pix/test.py')
+#subprocess_open_when_shell_false('test2.py')
+#subprocess_open('../pytorch-CycleGAN-and-pix2pix/test.py')
+
+
+#for i in range(1, 10):
+#    time.sleep(3)
+#    print ("test1 execute")

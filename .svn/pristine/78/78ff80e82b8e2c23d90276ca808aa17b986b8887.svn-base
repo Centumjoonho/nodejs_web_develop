@@ -1,0 +1,480 @@
+<%
+
+var resData             = tranData.data;
+var listDataset         = resData.listDataset;
+var listLearningModel   = resData.listLearningModel;
+var listParams          = resData.listLearningModelParams;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <title>CV Studio</title>
+  <meta name="description" content="aiMovieTool">
+  <meta name="인공지능동영상툴">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <!--<link href="/css/style.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> -->
+
+  <!-- Custom fonts for this template-->
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="/js/sb-admin-2.min.js"></script>
+
+  <script src="/js/common.js" type="text/javaScript"></script>
+  <script src="/js/jsUser.js"></script>
+
+  <script type="text/javaScript">
+
+   // 초기화
+   $(document).ready(function (){
+
+       // 리스트 출력 화면으로 이동
+       $("#btnList").click(function(){
+           location.href   = "/learning/management/list";
+       });
+
+       // 입력 내용 저장
+       $("#btnSave").click(function(){
+           // 입력 내용 확인
+           if (!cf_checkNullAndGetFocus($("#txtLearningNm"), "학습명을 입력해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#txtRemark"), "설명을 입력해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#slcDatasetCd"), "Dataset을 선택해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#slcLearningModelCd"), "딥러닝모델을 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#GPU_IDS"), "GPU_IDS를 입력해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#INPUT_NC"), "INPUT_NC를 입력해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#n_epochs"), "n_epochs를 선택해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#n_epochs_decay"), "n_epochs_decay를 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#lr"), "lr을 입력해 주세요."))   return;
+           if (!cf_checkNullAndGetFocus($("#BATCH_SIZE"), "BATCH_SIZE를 입력해 주세요."))   return;
+
+           // 저장
+           if (!confirm("시작하시겠습니까?"))
+               return;
+
+           $("#frmPage").attr("action","/learning/management/createSave");
+           $("#frmPage").attr("method","POST");
+           $("#frmPage").submit();
+       });
+
+       // Dataset 설정
+       <%
+if (listDataset.length == 0){
+%>
+        $("#btnSave").hide();
+        alert("적용할 Dataset이 없습니다. 학습 생성이 불가합니다.");
+<%
+}
+else {
+    for (var i=0; i<listDataset.length; i++){
+%>
+        $("#slcDatasetCd").append("<option value='<%= listDataset[i].dataset_cd %>'>[<%= listDataset[i].dataset_cd %>]<%= listDataset[i].dataset_nm %></option>");
+<%
+    }
+%>
+        $("#slcDatasetCd option:eq(0)").prop("selected", true);
+<%
+}
+%>
+
+       // 딥러닝모델 설정
+       <%
+if (listLearningModel.length == 0){
+%>
+        $("#btnSave").hide();
+        alert("적용할 딥러닝 모델이 없습니다. 학습 생성이 불가합니다.");
+<%
+}
+else {
+    for (var i=0; i<listLearningModel.length; i++){
+%>
+        $("#slcLearningModelCd").append("<option value='<%= listLearningModel[i].learning_model_cd %>'>[<%= listLearningModel[i].learning_model_cd %>]<%= listLearningModel[i].learning_model_nm %></option>");
+
+<%
+    }
+%>
+    $("#slcLearningModelCd").change(function() {
+          //alert($(this).val());
+        <%
+
+        for(var i=0; i<listParams.length; i++) {
+
+        %>
+              if( "<%= listParams[i].learning_model_cd %>" == $(this).val() ) {
+                $("#" + "<%= listParams[i].param_nm %>").val( "<%= listParams[i].default_val %>" );
+                //alert("<%= listParams[i].default_val %>");
+
+              }
+        <%
+        }
+        %>
+    });
+
+
+            $("#slcLearningModelCd option:eq(0)").prop("selected", true);
+            <%
+
+            for(var i=0; i<listParams.length; i++) {
+
+            %>
+                  if( "<%= listParams[i].learning_model_cd %>" == $("#slcLearningModelCd").val() ) {
+                    $("#" + "<%= listParams[i].param_nm %>").val( "<%= listParams[i].default_val %>" );
+                    //alert("<%= listParams[i].default_val %>");
+                  }
+            <%
+            }
+            %>
+
+
+<%
+}
+%>
+
+
+      // 딥러닝 파라미터 조회 및 설정
+
+   });
+
+   </script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button> -->
+          <!-- Topbar Menubar -->
+          <div class="menu-nav">
+            <%- include('../common/menu'); -%>
+
+          </div>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow"> <!--
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>-->
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <form action = "frmPage" id="frmPage" method = "post">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Tasks > Create Task</h1>
+          </div>
+
+          <!-- Content Row -->
+            <div class="row">
+                <!-- Account details card-->
+                <div class="card mb-4" style="margin:auto">
+                    <div class="card-header" style="background-color: #0061f2; color: #fff">Task detail</div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-8">
+                                <label class="small mb-1" for="txtLearningNm">Task 명</label>
+                                <input class="form-control" name="txtLearningNm" id="txtLearningNm" type="text"  value="" />
+                              </div>
+                              <div class="form-group col-md-4">
+                                <label class="small mb-1">시나리오</label>
+                                <select class="form-control btn" name="slcScenarioCd" id="slcScenarioCd">
+                                  <option class="dropdown-item" value="FIRE">화재</option>
+                                  <option class="dropdown-item" value="SNOW">폭설</option>
+                                  <option class="dropdown-item" value="FLOOD">홍수</option>
+                                  <option class="dropdown-item" value="TIDE">녹,적조</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="small mb-1" for="txtRemark">설명</label>
+                              <input class="form-control" name="txtRemark" id="txtRemark" type="text" value="" />
+                            </div>
+
+                            <div class="form-row">
+                              <div class="form-group col-md-12" style="border-bottom: #858796 1px dashed;">
+                                <label class="small mb-1">학습 모델 정보</label>
+                              </div>
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                                <!-- Form Group -->
+                                <div class="form-group col-md-6">
+                                    <label class="small mb-1" for="txtImgVerPx">학습 데이터셋</label>
+                                    <!--
+                                    <input class="form-control" type="text"  value="" />-->
+                                    <select class="form-control btn" id="slcDatasetCd" name="slcDatasetCd">
+                                    </select>
+                                </div>
+                                <!-- Form Group -->
+                                <div class="form-group col-md-6">
+                                  <label class="small mb-1">Deep Leanrning Model</label>
+                                  <!--
+                                  <select class="form-control btn" id="">
+                                    <option class="dropdown-item">Cycle-GAN</option>
+                                    <option class="dropdown-item">Pix2Pix</option>
+                                  </select>-->
+                                    <select class="form-control btn" id="slcLearningModelCd" name="slcLearningModelCd"></select>
+                              </div>
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">GPU_IDS</label>
+                                <input class="form-control" type="text" name="GPU_IDS" id="GPU_IDS" value="0"/>
+                              </div>
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">INPUT_NC</label>
+                                <input class="form-control" type="text" name="INPUT_NC" id="INPUT_NC" value="3"/>
+                              </div>
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">n_epochs</label>
+                                <input class="form-control" type="text" name="n_epochs" id="n_epochs" value="100"/>
+                              </div>
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">n_epochs_decay</label>
+                                <input class="form-control" type="text" name="n_epochs_decay" id="n_epochs_decay" value="100"/>
+                              </div>
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">learning rate</label>
+                                <input class="form-control" type="text" name="lr" id="lr" value="0.0002"/>
+                              </div>
+                              <div class="form-group col-md-6">
+                                <label class="small mb-1">BATCH_SIZE</label>
+                                <input class="form-control" type="text" name="BATCH_SIZE" id="BATCH_SIZE" value="1"/>
+                              </div>
+                            </div>
+
+                            <!-- Save changes button-->
+                            <button class="btn btn-success" type="button" id="btnSave">학습 시작</a></button>
+                            <button class="btn btn-info" type="button" id="btnList">목록</a></button>
+                        </form>
+                    </div>
+                </div>
+          </div>
+        </form>
+          <!-- Content Row -->
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white"> <!--
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>-->
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+    <!--
+    <div id="wrap">
+
+        <div id="header">
+
+        </div>
+
+        <div id="container" class="">
+
+            <div id="contents">
+               <form action = "frmPage" id="frmPage" method = "post">
+                <h2>학습 생성<span>Home > 학습 > 학습 생성</span></h2>
+
+                <div class="cboth"></div>
+
+                <div class="search">
+                    <legend class="invisible">기본 정보</legend>
+                    <h3>* 기본 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                           <tr>
+                              <th ><span class="Ttype1 displayIb mr5">*</span>학습명</th>
+                              <td colspan="3"><input name="txtLearningNm" id="txtLearningNm" type="text" class="text sizePer3" maxlength="50" value="화재" /></td>
+                           </tr>
+                           <tr>
+                              <th >설명</th>
+                              <td colspan="3">
+                                <input name="txtRemark" id="txtRemark" type="text" class="text sizePer4" maxlength="150" value="화재 상황을 학습시킵니다." />
+                              </td>
+                           </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">모델 정보</legend>
+                    <h3>* 모델 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>Dataset</th>
+                                <td>
+                                    <select id="slcDatasetCd" name="slcDatasetCd">
+                                    </select>
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>딥러닝모델</th>
+                                <td>
+                                    <select id="slcLearningModelCd" name="slcLearningModelCd"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>학습파라미터</th>
+                                <td colspan="3" >
+
+                                    <table>
+                                        <colgroup>
+                                           <col style="width: 30%;" />
+                                           <col  />
+                                        </colgroup>
+                                        <tbody>
+                                            <tr>
+                                                <th><span class="Ttype1 displayIb mr5">*</span>GPU_IDS</th>
+                                                <td><input name="GPU_IDS" type="text" class="text sizePer3" id="GPU_IDS" value="0" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th><span class="Ttype1 displayIb mr5">*</span>INPUT_NC</th>
+                                                <td><input name="INPUT_NC" type="text" class="text sizePer3" id="INPUT_NC" value="3" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th><span class="Ttype1 displayIb mr5">*</span>n_epochs</th>
+                                                <td><input name="n_epochs" type="text" class="text sizePer3" id="n_epochs" value="100" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th><span class="Ttype1 displayIb mr5">*</span>n_epochs_decay</th>
+                                                <td><input name="n_epochs_decay" type="text" class="text sizePer3" id="n_epochs_decay" value="100" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th><span class="Ttype1 displayIb mr5">*</span>lr</th>
+                                                <td><input name="lr" type="text" class="text sizePer3" id="lr" value="0.0002" /></td>
+                                            </tr>
+                                            <tr>
+                                                <th><span class="Ttype1 displayIb mr5">*</span>BATCH_SIZE</th>
+                                                <td><input name="BATCH_SIZE" type="text" class="text sizePer3" id="BATCH_SIZE" value="1" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="txetR mt20 mb30">
+                        <button class="btnImg13 btnType03s" type="button" id="btnSave">시작</button>
+                        <button class="btnImg12 btnType03s" type="button" id="btnList">리스트</button>
+                    </div>
+
+                </div>
+
+
+
+             </form>
+             </div>
+
+        </div>
+
+    </div> -->
+    <%- include ("../common/copyright.ejs") %>
+</body>
+</html>

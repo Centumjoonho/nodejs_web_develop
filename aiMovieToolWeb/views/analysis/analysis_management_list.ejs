@@ -1,0 +1,185 @@
+<%
+
+var resData       = tranData.data;
+var pageNo        = resData.pageNo;
+var totalCnt      = resData.totalCnt;
+var listPerPage   = resData.listPerPage;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title></title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../../js/html5.js"></script><![endif]-->
+
+    <script src="/js/common.js" type="text/javaScript"></script>
+    <script type="text/javaScript">
+
+    // 초기화
+    $(document).ready(function (){
+
+        // 페이지 당 조회 건 수 변경
+        $("#slcListPerPage").change(function(){
+          $("#txtPageNo").val(1);
+          fnSubmitList();
+        });
+
+        // 화면 초기화
+        $("#spnTotalCnt").html("<%= totalCnt %>");
+        $("#txtPageNo").val("<%= pageNo %>");
+        $("#slcListPerPage").val("<%= listPerPage %>");
+        $("#lblListPerPage").text($("#slcListPerPage option:selected").text());
+
+        // paging 변수 설정
+        pg_pageNoObjectId   = "txtPageNo";
+        pg_submitFuncObject = fnSubmitList;
+
+    });
+
+    // 변경된 설정값으로 재 조회
+    function fnSubmitList(){
+      $("#frmPage").attr("action","/analysis/management/list");
+      $("#frmPage").attr("method","POST");
+      $("#frmPage").submit();
+    }
+
+    // 상세 Dataset 화면으로 이동
+    function fnMoveToDetail(thisATag, movieCd){
+      $("#txtMovieCd").val(movieCd);
+
+      $("#frmPage").attr("action","/analysis/management/view");
+      $("#frmPage").attr("method","POST");
+      $("#frmPage").submit();
+    }
+
+   </script>
+</head>
+
+<body>
+    <div id="wrap">
+        <!-- header 시작 -->
+        <div id="header">
+            <!-- menu -->
+            <%- include('../common/menu'); -%>
+        </div>
+        <!-- header 종료 -->
+
+        <!-- content 시작 -->
+        <div id="container" class="">
+
+            <!-- Contents 시작 -->
+            <div id="contents">
+                <h2>결과 분석<span>Home > 결과 분석 > 결과 분석</span></h2>
+
+                <div class="cboth"></div>
+
+                <!-- List 시작 -->
+                <div class="listcasetit">
+                    <h3>* 총건수 <span id="spnTotalCnt">1</span> 건
+                    </h3>
+                    <div class="listcasebtn">
+
+                        <form id="frmPage">
+                        <div class="selectboxJQ">
+                          <input type="hidden" name="txtPageNo" id="txtPageNo" />
+                          <input type="hidden" name="txtMovieCd" id="txtMovieCd" />
+                          <label id="lblListPerPage" for="slcListPerPage"></label>
+                          <select name="slcListPerPage" id="slcListPerPage">
+                            <option value="10">10개씩</option>
+                            <option value="20">20개씩</option>
+                            <option value="30">30개씩</option>
+                            <option value="40">40개씩</option>
+                            <option value="50">50개씩</option>
+                         </select>
+                        </div>
+                        </form>
+                    </div>
+
+                    <div class="scroll-tbl_x">
+                    <table class="board-list" style="width: 100%;" summary="시험 조회리스트입니다.">
+                      <colgroup>
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th >NO</th>
+                          <th >시험코드</th>
+                          <th >시험명</th>
+                          <th >시나리오</th>
+                          <th >학습</th>
+                          <th >딥러닝모델</th>
+                        <!--  <th >accuracy rate</th>
+                          <th >loss rate</th> -->
+                        </tr>
+                      </thead>
+                      <tbody>
+<%
+if (totalCnt == 0){
+%>
+                        <tr>
+                          <td colspan="8" class="txetc">조회된 내용이 없습니다.</td>
+                        </tr>
+<%
+}
+else {
+  var eachRow;
+  for (var i=0; i<resData.listData.length; i++){
+    eachRow  = resData.listData[i];
+%>
+                        <tr>
+                          <td><%= (pageNo - 1)*listPerPage + i+1 %></td>
+                          <td><a href='javascript:fnMoveToDetail(this, "<%= eachRow.movie_cd %>");' class="listA"><%= eachRow.movie_cd %></a></td>
+                          <td><%= eachRow.movie_nm %></td>
+                          <td><%= eachRow.scenario_nm %></td>
+                          <td>[<%= eachRow.learning_cd %>]<%= eachRow.learning_nm %></td>
+                          <td>[<%= eachRow.learning_model_cd %>]<%= eachRow.learning_model_nm %></td>
+                        <!--  <td>-</td>
+                          <td>-</td> -->
+                        </tr>
+<%
+  }
+}
+%>
+                      </tbody>
+                  </table>
+                  </div>
+
+                    <%- include('../common/paging'); -%>
+
+                    <!-- List 끝 -->
+                </div>
+
+                <!-- copyright -->
+                <%- include('../common/copyright'); -%>
+            </div>
+            <!-- content 종료 -->
+        </div>
+</body>
+
+</html>

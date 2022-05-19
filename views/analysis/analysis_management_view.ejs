@@ -1,0 +1,174 @@
+<%
+
+var resData       = tranData.data;
+var detailData    = resData.detailData[0];
+var pageNo        = resData.pageNo;
+var listPerPage   = resData.listPerPage;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title></title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../../js/html5.js"></script><![endif]-->
+
+    <script src="/js/common.js" type="text/javaScript"></script>
+    <script type="text/javaScript">
+
+    // 초기화
+    $(document).ready(function (){
+
+        // 리스트 출력 화면으로 이동
+        $("#btnList").click(function(){
+            $("#frmPage").attr("action","/analysis/management/list");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        // 화면 초기화
+        $("#txtPageNo").val("<%= pageNo %>");
+        $("#slcListPerPage").val("<%= listPerPage %>");
+
+        $("#spnMovieCd").text("<%= detailData.movie_cd %>");
+        $("#spnMovieNm").text("<%= detailData.movie_nm %>");
+        $("#spnRemark").text("<%= detailData.remark %>");
+        $("#spnStartTmDesc").text("<%= detailData.start_tm_desc %>");
+        $("#spnEndTmDesc").text("<%= detailData.end_tm_desc %>");
+        $("#ankInMovieUrl").attr("href", "<%= resData.downloadUrl + resData.movieCd + '/IN' %>");
+        $("#ankInMovieUrl").text("<%= detailData.in_movie_nm %>");
+        $("#spnMovieType").text("<%= detailData.in_movie_type_cd %>");
+        $("#spnScenarioNm").text("<%= detailData.scenario_nm %>");
+
+        if("<%= detailData.in_movie_frame_rate %>" == 0){
+          $("#spnInMovieFrameRate").text("없음");
+        }
+        else {
+          $("#spnInMovieFrameRate").text("<%= detailData.in_movie_frame_rate %>");
+        }
+
+        //$("#spnInMovieFrameRate").text("<%= detailData.in_movie_frame_rate %>");
+        $("#spnLearning").text("[<%= detailData.learning_cd %>]<%= detailData.learning_nm %>");
+
+        if( "<%= detailData.end_tm_desc %>" != "") {
+          //$("#downUrl").attr("href", "../../" + "<%=detailData.movie_cd%>" + "/" + "<%=detailData.movie_cd%>" + "." + "<%=detailData.in_movie_type_cd%>");
+          $("#downUrl").attr("href", "<%= resData.downloadUrl + resData.movieCd + '/OUT' %>");
+          $("#downUrl").text("<%=detailData.movie_cd%>" + "." + "<%=detailData.in_movie_type_cd%>")
+        }
+    });
+
+</script>
+
+   </script>
+</head>
+
+<body>
+    <div id="wrap">
+        <!-- header 시작 -->
+        <div id="header">
+            <!-- menu -->
+            <%- include('../common/menu'); -%>
+        </div>
+        <!-- header 종료 -->
+
+        <!-- container 시작 -->
+        <div id="container" class="">
+
+            <!-- Contents 시작 -->
+            <div id="contents">
+                <form id="frmPage">
+                <h2>결과 상세<span>Home > 결과 분석 > 결과 분석 > 결과 상세</span></h2>
+
+                <div class="cboth"></div>
+
+                <!-- List 시작 -->
+                <div class="search">
+                    <legend class="invisible">기본 정보</legend>
+                    <h3>* 기본 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>시험 코드 </th>
+                                <td >
+                                    <input name="txtPageNo" id="txtPageNo" type="hidden"  />
+                                    <input name="slcListPerPage" id="slcListPerPage" type="hidden"  />
+                                    <span id="spnMovieCd"></span>
+                                </td>
+                                <th>시험명</th>
+                                <td><span id="spnMovieNm"></span></td>
+                            </tr>
+                            <tr>
+                                <th>설명</th>
+                                <td colspan="3"><span id="spnRemark"></span></td>
+                            </tr>
+                            <tr>
+                                <th>시작일시</th>
+                                <td><span id="spnStartTmDesc"></span></td>
+                                <th>종료일시</th>
+                                <td><span id="spnEndTmDesc"></span></td>
+                            </tr>
+                            <tr>
+                                <th>실 시험 파일</th>
+                                <td><a class="download_a" id="ankInMovieUrl" href=""></a></td>
+                                <th>시험포멧</th>
+                                <td><span id="spnMovieType" /></td>
+                            </tr>
+                            <tr>
+                                <th>Frame Rate</th>
+                                <td><span id="spnInMovieFrameRate"></span></td>
+                                <th>시나리오</th>
+                                <td><span id="spnScenarioNm"></span></td>
+                            </tr>
+                            <tr>
+                                <th>적용학습</th>
+                                <td><span id="spnLearning"></span></td>
+                                <th>생성된 영상</th>
+                                <td><a class="download_a" id="downUrl" href=""></a>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="txetR mt20 mb30">
+                       <button id="btnList" class="btnImg12 btnType03s" type="button">리스트</button>
+                    </div>
+
+                <!-- List 끝 -->
+                </div>
+
+             <!-- copyright -->
+             <%- include('../common/copyright'); -%>
+
+             <!-- Contents 종료 -->
+            </form>
+             </div>
+
+        <!-- container 종료 -->
+        </div>
+
+    </div>
+</body>
+</html>

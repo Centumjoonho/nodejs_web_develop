@@ -1,0 +1,499 @@
+<%
+
+var resData       = tranData.data;
+var pageNo        = resData.pageNo;
+var totalCnt      = resData.totalCnt;
+var listPerPage   = resData.listPerPage;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <title>CV Studio</title>
+  <meta name="description" content="aiMovieTool">
+  <meta name="인공지능동영상툴">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- Custom fonts for this template -->
+  <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+  <!-- Custom styles for this page -->
+  <link href="/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="/vendor/jquery/jquery.min.js"></script>
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="/js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="/js/demo/datatables-demo.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <!--
+  <link href="/css/style.css" rel="stylesheet">
+  <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+  <script src="/js/jsUser.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> -->
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]><script src="../js/html5.js"></script><![endif]-->
+
+  <script src="/js/jsUser.js"></script>
+  <script src="/js/common.js" type="text/javaScript"></script>
+  <script type="text/javaScript">
+
+  // 초기화
+  $(document).ready(function (){
+
+
+      // 페이지 당 조회 건 수 변경
+      //$("#slcListPerPage").change(function(){
+      //  $("#txtPageNo").val(1);
+      //  fnSubmitList();
+      //});
+
+      // 화면 초기화
+      //$("#spnTotalCnt").html("<%= totalCnt %>");
+      //$("#txtPageNo").val("<%= pageNo %>");
+      //$("#slcListPerPage").val("<%= listPerPage %>");
+      //$("#lblListPerPage").text($("#slcListPerPage option:selected").text());
+
+      // paging 변수 설정
+      //pg_pageNoObjectId   = "txtPageNo";
+      //pg_submitFuncObject = fnSubmitList;
+
+      //setTimeout(function() {
+      //  fnSubmitList();
+      //},60000);
+
+  });
+
+  // 변경된 설정값으로 재 조회
+  function fnSubmitList(){
+    $("#frmPage").attr("action","/learning/management/list");
+    $("#frmPage").attr("method","POST");
+    $("#frmPage").submit();
+
+    /*$("#frmPage").submit(function (e) {
+      e.preventDefault();
+
+    });*/
+
+    //setTimeout(function() {
+    //  fnSubmitList();
+    //},60000);
+  }
+
+  // 상세 화면으로 이동
+  function fnMoveToDetail(thisATag, learningCd){
+    $("#txtLearningCd").val(learningCd);
+
+    $("#frmPage").attr("action","/learning/management/view");
+    $("#frmPage").attr("method","POST");
+    $("#frmPage").submit();
+  }
+  /*
+  function refresh() {
+    window.location.reload();
+    setTimeout(function() {
+      refresh();
+    },5000);
+  }*/
+  /*
+  function fnEpoch() {
+    $.ajax({
+      url:'/list/ajax',
+      dataType:'json',
+      type:'POST',
+      data:null,
+
+      success:function(result) {
+
+      }
+    }
+    });
+
+
+    setTimeout(function() {
+      fnEpoch();
+    },1000);
+  }*/
+
+  function fnRemove(thisATag, learningCd){
+    if (!confirm("삭제하면 복구할 수 없습니다. 정말 삭제하시겠습니까?"))
+      return;
+
+    $("#txtLearningCd").val(learningCd);
+
+    $("#frmPage").attr("action","/learning/management/delete");
+    $("#frmPage").attr("method","POST");
+    $("#frmPage").submit();
+  }
+
+  </script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button> -->
+          <!-- Topbar Menubar -->
+          <div class="menu-nav">
+                  <%- include('../common/menu'); -%>
+
+          </div>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-4 text-gray-800">Tasks > List</h1>
+          <!-- <p class="mb-4">DataTables is a third party plugin that is used to generate the demo table below. For more information about DataTables, please visit the <a target="_blank" href="https://datatables.net">official DataTables documentation</a>.</p> -->
+          <div class="my-2">
+            <a href="/learning/management/create" class="btn btn-primary btn-icon-split">
+              <span class="icon text-white-50">
+                <i class="fas fa-flag"></i>
+              </span>
+              <span class="text">Create new task</span>
+            </a>
+          </div>
+
+          <form id="frmPage">
+
+             <input type="hidden" name="txtLearningCd" id="txtLearningCd" />
+
+          </form>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <!-- <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Dataset List</h6>
+            </div> -->
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr class="table-thead">
+                      <th>No</th>
+                      <th>Code</th>
+                      <th>Taske Name</th>
+                      <th>Network(Deep learning Model)</th>
+                      <th>Start Data</th>
+                      <th>Finish Date</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <!-- <tfoot>
+                    <tr>
+                      <th>Code</th>
+                      <th>Taske name</th>
+                      <th>Network</th>
+                      <th>Start data</th>
+                      <th>Finish date</th>
+                      <th>Progress</th>
+                    </tr>
+                  </tfoot> -->
+
+                  <tbody>
+                    <%
+if (totalCnt == 0){
+%>
+                    <tr>
+                      <td colspan="8" class="txetc">조회된 내용이 없습니다.</td>
+                    </tr>
+<%
+}
+else {
+var eachRow;
+for (var i=0; i<resData.listData.length; i++){
+eachRow  = resData.listData[i];
+%>
+                    <tr>
+                      <td><%= i+1 %></td>
+                      <td><a href='javascript:fnMoveToDetail(this, "<%= eachRow.learning_cd %>");'><%= eachRow.learning_cd %></a></td>
+                      <td><%= eachRow.learning_nm %></td>
+                      <td>[<%= eachRow.learning_model_cd %>]<%= eachRow.learning_model_nm %></td>
+                      <td><%= eachRow.start_tm_desc %></td>
+                      <td><%= eachRow.end_tm_desc %></td>
+                      <td><% if(eachRow.learning_state_nm=="학습중") { %>  <div class="badge badge-warning badge-pill"> <% } else { %> <div class="badge badge-primary badge-pill"> <% } %><%= eachRow.learning_state_nm %></div></td>
+                      <td><a href='javascript:fnRemove(this, "<%= eachRow.learning_cd %>");'><button class="btn"><i class="svg-trash2" data-feather="trash-2"></i></button></a></td>
+                    </tr>
+<%
+}
+}
+%>
+
+  <!--
+
+                    <tr>
+                      <td>1</td>
+                      <td><a href="detailTask.html">L20-0001</a></td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td> </td>
+                      <td><div class="badge badge-warning badge-pill">학습중</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>L20-0002</td>
+                      <td>산불 batch3 에러테스트</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.08.31 17:07:46</td>
+                      <td>2020.09.01 23:15:44</td>
+                      <td><div class="badge badge-primary badge-pill">완료</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>L20-0003</td>
+                      <td>UNITY 폭설 테스트</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.08.21 17:24:45</td>
+                      <td>2020.08.24 13:38:23</td>
+                      <td><div class="badge badge-primary badge-pill">완료</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>L20-0004	</td>
+                      <td>녹적조CycleGan</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.06.17 15:53:26	</td>
+                      <td>2020.06.17 20:19:07	</td>
+                      <td><div class="badge badge-primary badge-pill">완료</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td>L20-0005	</td>
+                      <td>폭설cycleGAN	[LM20</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.05.06 18:00:45</td>
+                      <td>2020.05.06 20:01:43</td>
+                      <td><div class="badge badge-primary badge-pill">완료</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td>L20-0006</td>
+                      <td>UNITY_sin 폭설테스트</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.09.02 15:10:14</td>
+                      <td> </td>
+                      <td><div class="badge badge-warning badge-pill">학습중</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td>L20-0007</td>
+                      <td>산불 batch3 에러테스트</td>
+                      <td>Cycle-GAN</td>
+                      <td>2020.08.31 17:07:46</td>
+                      <td>2020.09.01 23:15:44</td>
+                      <td><div class="badge badge-primary badge-pill">완료</div></td>
+                      <td><button class="btn" data-toggle="modal" data-target="#deleteModal"><i class="svg-trash2" data-feather="trash-2"></i></button></td>
+                    </tr> -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+
+
+
+
+
+
+      <%- include ("../common/copyright.ejs") %>
+
+
+  <!--
+    <div id="wrap">
+
+        <div id="header">
+
+
+
+        </div>
+
+        <div id="container" class="">
+
+            <div id="contents">
+                <h2>학습 목록<span>Home > 학습 > 학습 목록</span></h2>
+
+                <div class="cboth"></div>
+
+
+                <div class="listcasetit">
+                    <h3>* 총건수 <span id="spnTotalCnt">1</span> 건
+                    </h3>
+                    <div class="listcasebtn">
+
+                        <form id="frmPage">
+                        <div class="selectboxJQ">
+                           <input type="hidden" name="txtPageNo" id="txtPageNo" />
+                           <input type="hidden" name="txtLearningCd" id="txtLearningCd" />
+                           <label id="lblListPerPage" for="slcListPerPage"></label>
+                           <select name="slcListPerPage" id="slcListPerPage">
+                             <option value="10">10개씩</option>
+                             <option value="20">20개씩</option>
+                             <option value="30">30개씩</option>
+                             <option value="40">40개씩</option>
+                             <option value="50">50개씩</option>
+                          </select>
+                        </div>
+                        </form>
+                    </div>
+
+                    <div class="scroll-tbl_x">
+                    <table class="board-list" style="width: 100%;" summary="학습 조회리스트입니다.">
+                      <colgroup>
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                        <col />
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th>NO</th>
+                          <th>학습코드</th>
+                          <th>학습명</th>
+                          <th>딥러닝모델</th>
+                          <th>시작일시</th>
+                          <th>종료일시</th>
+                          <th>epochs</th>
+                          <th>진행상태</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <%
+if (totalCnt == 0){
+%>
+                        <tr>
+                          <td colspan="8" class="txetc">조회된 내용이 없습니다.</td>
+                        </tr>
+<%
+}
+else {
+  var eachRow;
+  for (var i=0; i<resData.listData.length; i++){
+    eachRow  = resData.listData[i];
+%>
+                        <tr>
+                          <td><%= i+1 %></td>
+                          <td><a href='javascript:fnMoveToDetail(this, "<%= eachRow.learning_cd %>");' class="listA"><%= eachRow.learning_cd %></a></td>
+                          <td><%= eachRow.learning_nm %></td>
+                          <td>[<%= eachRow.learning_model_cd %>]<%= eachRow.learning_model_nm %></td>
+                          <td><%= eachRow.start_tm_desc %></td>
+                          <td><%= eachRow.end_tm_desc %></td>
+                          <td><%= eachRow.now_epoch %> / <%= eachRow.n_epochs + eachRow.n_epochs_decay%></td>
+                          <td><%= eachRow.learning_state_nm %></td>
+                        </tr>
+<%
+  }
+}
+%>
+                      </tbody>
+                  </table>
+                  </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+      -->
+
+</body>
+
+<script>
+  feather.replace()
+</script>
+
+</html>

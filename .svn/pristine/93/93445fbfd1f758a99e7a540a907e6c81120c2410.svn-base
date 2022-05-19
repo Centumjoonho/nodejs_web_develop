@@ -1,0 +1,596 @@
+<%
+
+var resData       = tranData.data;
+var detailData    = resData.detailData[0];
+var pageNo        = resData.pageNo;
+var listPerPage   = resData.listPerPage;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>CV Studio</title>
+    <meta name="description" content="aiMovieTool">
+    <meta name="인공지능동영상툴">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> <!--
+    <link href="/css/style.css" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+    <script src="/js/jsUser.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script> -->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]><script src="../js/html5.js"></script><![endif]-->
+
+    <!-- Custom fonts for this template-->
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/js/sb-admin-2.min.js"></script>
+      <script src="https://unpkg.com/feather-icons"></script>
+
+    <script src="/js/common.js" type="text/javaScript"></script>
+    <script type="text/javaScript">
+
+
+    // 초기화
+    $(document).ready(function (){
+
+        // 리스트 출력 화면으로 이동
+        $("#btnList").click(function(){
+            $("#frmPage").attr("action","/dataset/management/list");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        // 입력 내용 저장
+        $("#btnSave").click(function(){
+            // 입력 내용 확인
+            if (!cf_checkNullAndGetFocus($("#txtDatasetNm"), "Dataset 명을 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#slcScenarioCd"), "시나리오를 선택해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtRemark"), "설명을 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtImgHorPx"), "이미지 가로 사이즈를 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtImgVerPx"), "이미지 세로 사이즈를 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#slcImgTypeCd"), "이미지 타일을 선택해 주세요."))   return;
+            //if (!cf_checkNullAndGetFocus($("#filImgX"), "trainX Dataset경로를 선택해 주세요."))   return;
+            //if (!cf_checkNullAndGetFocus($("#filImgY"), "trainY Dataset경로를 선택해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtUseLearningRate"), "학습 비율을 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtUseVerifyRate"), "검증 비율을 입력해 주세요."))   return;
+            if (!cf_checkNullAndGetFocus($("#txtUseTestRate"), "시험 비율을 입력해 주세요."))   return;
+
+            // 숫자 확인 및 비율 확인
+            if (!cf_checkNumberAndGetFocus($("#txtImgHorPx"), "숫자만 입력해 주세요.")) return;
+            if (!cf_checkNumberAndGetFocus($("#txtImgVerPx"), "숫자만 입력해 주세요.")) return;
+            if (!cf_checkNumberAndGetFocus($("#txtUseLearningRate"), "숫자만 입력해 주세요.")) return;
+            if (!cf_checkNumberAndGetFocus($("#txtUseVerifyRate"), "숫자만 입력해 주세요.")) return;
+            if (!cf_checkNumberAndGetFocus($("#txtUseTestRate"), "숫자만 입력해 주세요.")) return;
+
+            var lNum    = parseInt($("#txtUseLearningRate").val(), 10);
+            var vNum    = parseInt($("#txtUseVerifyRate").val(), 10);
+            var tNum    = parseInt($("#txtUseTestRate").val(), 10);
+
+            if ((lNum + vNum + tNum) != 100){
+                alert("용도별 비율은 합이 100 이여야 합니다.");
+                return;
+            }
+
+            // 저장
+            if (!confirm("저장하시겠습니까?"))
+                return;
+
+            $("#frmPage").attr("action","/dataset/management/updateSave");
+            $("#frmPage").attr("method","POST");
+            $("#frmPage").submit();
+        });
+
+        // 화면 초기화
+        $("#txtPageNo").val("<%= pageNo %>");
+        $("#slcListPerPage").val("<%= listPerPage %>");
+
+        $("#txtDatasetCd").val("<%= detailData.dataset_cd %>");
+        $("#txtDatasetNm").val("<%= detailData.dataset_nm %>");
+        $("#slcScenarioCd").val("<%= detailData.scenario_cd %>");
+        $("#txtRemark").val("<%= detailData.remark %>");
+        $("#spnCreateTmDesc").val("<%= detailData.create_tm_desc %>");
+        $("#spnUpdateTmDesc").val("<%= detailData.update_tm_desc %>");
+        $("#txtImgHorPx").val("<%= detailData.img_hor_px %>");
+        $("#txtImgVerPx").val("<%= detailData.img_ver_px %>");
+        $("#slcImgTypeCd").val("<%= detailData.img_type_cd %>");
+        $("#ankTrainX").attr("href", "<%= resData.downloadUrl + resData.datasetCd + '/X' %>");
+        $("#ankTrainX").text("<%= detailData.imgx_up_nm %>");
+        $("#ankTrainY").attr("href", "<%= resData.downloadUrl + resData.datasetCd + '/Y' %>");
+        $("#ankTrainY").text("<%= detailData.imgy_up_nm %>");
+        $("#txtUseLearningRate").val("<%= detailData.use_learning_rate %>");
+        $("#txtUseVerifyRate").val("<%= detailData.use_verify_rate %>");
+        $("#txtUseTestRate").val("<%= detailData.use_test_rate %>");
+
+        if("<%= resData.imageCheck %>" == "good") {
+          var listX = JSON.parse('<%- JSON.stringify(resData.imageFilesX) %>');
+          var listY = JSON.parse('<%- JSON.stringify(resData.imageFilesY) %>');
+
+          var i = 0;
+          var j = 0;
+
+          var listP = "../../" + "<%= detailData.dataset_cd %>";
+          $("#imageX").attr("src", listP + "/trainA/" + listX[i]);
+          $("#imageY").attr("src", listP + "/trainB/" + listY[j]);
+
+          $("#imageXtext").text("[" + "1 / " + listX.length + "] " + listX[i]);
+          $("#imageYtext").text("[" + "1 / " + listY.length + "] " + listY[j]);
+
+          $("#imageX, #btnNextX").click(function(){
+            i++;
+            if(listX.length == i) {
+              i = 0;
+            }
+
+            $("#imageX").attr("src", listP + "/trainA/" + listX[i]);
+            $("#imageXtext").text("[" + (i+1) + " / " + listX.length + "] " + listX[i]);
+          });
+
+          $("#imageY, #btnNextY").click(function(){
+            j++;
+            if(listY.length == j) {
+              j = 0;
+            }
+
+            $("#imageY").attr("src", listP + "/trainB/" + listY[j]);
+            $("#imageYtext").text("[" + (j+1) + " / " + listY.length + "] " + listY[j]);
+          });
+
+          $("#btnPrevX").click(function(){
+            i--;
+            if(i == -1) {
+              i = listX.length - 1;
+            }
+
+            $("#imageX").attr("src", listP + "/trainA/" + listX[i]);
+            $("#imageXtext").text("[" + (i+1) + " / " + listX.length + "] " + listX[i]);
+          });
+
+          $("#btnPrevY").click(function(){
+            j--;
+            if(j == -1) {
+              j = listY.length - 1;
+            }
+
+            $("#imageY").attr("src", listP + "/trainB/" + listY[j]);
+            $("#imageYtext").text("[" + (j+1) + " / " + listY.length + "] " + listY[j]);
+          });
+
+          //console.log(listX);
+
+        }
+        else {
+          $("#imageXtext").text("이미지가 생성중이거나 없습니다.");
+          $("#imageYtext").text("이미지가 생성중이거나 없습니다.");
+
+        }
+
+    });
+
+    </script>
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <!-- <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button> -->
+          <!-- Topbar Menubar -->
+          <div class="menu-nav">
+                        <%- include('../common/menu'); -%>
+
+          </div>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow"> <!--
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
+                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+              </a>
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Settings
+                </a>
+                <a class="dropdown-item" href="#">
+                  <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Activity Log
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>-->
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <form id="frmPage">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Datasets > Modify Dataset</h1>
+          </div>
+
+          <!-- Content Row -->
+            <div class="row">
+                <!-- Account details card-->
+                <div class="card mb-4" style="margin:auto; width:80%">
+                    <div class="card-header" style="background-color: #0061f2; color: #fff">Dataset 수정</div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group">
+                                <label class="small mb-1">Dataset code</label>
+                                <input class="form-control" type="text" id="txtDatasetCd" name="txtDatasetCd" value="" readonly/>
+                              </div>
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                              <div class="form-group col-md-8">
+                                <label class="small mb-1" for="txtDatasetNm">Dataset 제목</label>
+                                <input class="form-control" name="txtDatasetNm" id="txtDatasetNm" type="text"  value="" />
+                              </div>
+                              <div class="form-group col-md-4">
+                                <label class="small mb-1"><span style="color:crimson">* </span>시나리오</label>
+                                <select class="form-control btn" name="slcScenarioCd" id="slcScenarioCd">
+                                  <option class="dropdown-item" value="FIRE">화재</option>
+                                  <option class="dropdown-item" value="SNOW">폭설</option>
+                                  <option class="dropdown-item" value="FLOOD">홍수</option>
+                                  <option class="dropdown-item" value="TIDE">녹,적조</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="small mb-1" for="txtRemark">설명</label>
+                              <input class="form-control" name="txtRemark" id="txtRemark" type="text" value="" />
+                            </div>
+
+                            <!-- Form Row-->
+                            <div class="form-row">
+                                <!-- Form Group (first name)-->
+                                <div class="form-group col-md-6">
+                                    <label class="small mb-1">생성일자</label>
+                                    <input class="form-control" id="spnCreateTmDesc" type="text"  value="" readonly/>
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="form-group col-md-6">
+                                    <label class="small mb-1">수정일자</label>
+                                    <input class="form-control" id="spnUpdateTmDesc" type="text"  value="" readonly/>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                              <div class="form-group col-md-12" style="border-bottom: #858796 1px dashed;">
+                                <label class="small mb-1"><span style="color:crimson">* </span>데이터 이미지 정보</label>
+                              </div>
+                            </div>
+
+                            <div class="form-row">
+                                <!-- Form Group (first name)-->
+                                <div class="form-group col-md-4">
+                                    <label class="small mb-1" for="txtImgHorPx">가로 (Pixel)</label>
+                                    <input class="form-control" name="txtImgHorPx" id="txtImgHorPx" type="text"  value="" />
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="form-group col-md-4">
+                                    <label class="small mb-1" for="txtImgVerPx">세로 (Pixel)</label>
+                                    <input class="form-control" name="txtImgVerPx" id="txtImgVerPx" type="text"  value="" />
+                                </div>
+                                <!-- Form Group (last name)-->
+                                <div class="form-group col-md-4">
+                                  <label class="small mb-1" for="slcImgTypeCd">타입</label>
+                                  <select class="form-control btn" id="slcImgTypeCd">
+                                    <option class="dropdown-item" value="RGB">RGB</option>
+                                    <option class="dropdown-item" value="GRAY_SCALE">GRAY_SCALE</option>
+                                  </select>
+                              </div>
+                            </div>
+
+                            <!-- Form Row     -->
+                            <div class="form-row">
+                                <!-- Form Group -->
+                                <div class="form-group col-md-6">
+                                  <label class="small mb-1"><span style="color:crimson">* </span>Train X 파일</label>
+                                  <!--<input class="form-control" type="text"  value="" />-->
+                                    <a class="form-control" id="ankTrainX" href="" readonly></a>
+                                </div>
+                                <!-- Form Group -->
+                                <div class="form-group col-md-6">
+                                  <label class="small mb-1"><span style="color:crimson">* </span>Train Y 파일</label>
+                                  <!--<input class="form-control" type="text"  value="" />-->
+                                    <a class="form-control" id="ankTrainY" href="" readonly></a>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                              <!-- Form Group (first name)-->
+                              <div class="form-group col-md-4">
+                                  <label class="small mb-1" for="txtUseLearningRate"><span style="color:crimson">* </span>학습</label>
+                                  <input class="form-control" name="txtUseLearningRate" id="txtUseLearningRate" type="text"  value="" />
+                              </div>
+                              <!-- Form Group (last name)-->
+                              <div class="form-group col-md-4">
+                                  <label class="small mb-1" for="txtUseVerifyRate"><span style="color:crimson">* </span>검증</label>
+                                  <input class="form-control" name="txtUseVerifyRate" id="txtUseVerifyRate" type="text"  value="" />
+                              </div>
+                              <!-- Form Group (last name)-->
+                              <div class="form-group col-md-4">
+                                <label class="small mb-1" for="txtUseTestRate"><span style="color:crimson">* </span>시험</label>
+                                <input class="form-control" name="txtUseTestRate" id="txtUseTestRate" type="text"  value="" />
+                              </div>
+                            </div>
+
+                            <div class="form-row">
+                              <div class="form-group col-md-6" style="text-align: center;">
+                                <label class="small mb-1">Train X 이미지</label>
+                                <div class="form-control" style="height:300px; display: flex; justify-content: center; align-items: center;" >
+                                  <img src="" style="height: 80%;" id="imageX" />
+                                </div>
+                                <button class="btn" type="button" id="btnPrevX" style="float:left;"><i data-feather="arrow-left"></i></button>
+                                <span id="imageXtext"></span>
+                                <button class="btn svg-arrow-right" type="button" id="btnNextX"><i data-feather="arrow-right"></i></button>
+                              </div>
+                              <div class="form-group col-md-6" style="text-align: center;">
+                                <label class="small mb-1">Train Y 이미지</label>
+                                <div class="form-control" style="height:300px; text-align: center; display: flex; justify-content: center; align-items: center;">
+                                  <img src="" style="height: 80%;" id="imageY" />
+                                </div>
+                                <button class="btn" type="button" id="btnPrevY" style="float:left;"><i data-feather="arrow-left"></i></button>
+                                <span id="imageYtext"></span>
+                                <button class="btn svg-arrow-right" type="button" id="btnNextY"><i data-feather="arrow-right"></i></button>
+                              </div>
+
+                            </div>
+                            <!-- Save changes button-->
+                            <button class="btn btn-success" type="button" id="btnSave">수정</button>
+                            <button class="btn btn-info" type="button" id="btnList">목록</button>
+                        </form>
+                    </div>
+                </div>
+          </div>
+        </form>
+          <!-- Content Row -->
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white"> <!--
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; Your Website 2020</span>
+          </div>
+        </div>-->
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!--
+    <div id="wrap">
+
+        <div id="header">
+
+        </div>
+
+        <div id="container" class="">
+
+            <div id="contents">
+            <form id="frmPage">
+                <h2>Dataset 수정<span>Home > Dataset > Dataset 목록 > Dataset 수정</span></h2>
+
+                <div class="cboth"></div>
+
+                <div class="search">
+                    <legend class="invisible">기본 정보</legend>
+                    <h3>* 기본 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>Dataset 코드 </th>
+                                <td>
+                                    <input name="txtPageNo" id="txtPageNo" type="hidden"  />
+                                    <input name="slcListPerPage" id="slcListPerPage" type="hidden"  />
+                                    <input name="txtDatasetCd" id="txtDatasetCd" type="text" class="text sizePer3 readonly" readonly />
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>Dataset 명</th>
+                                <td><input name="txtDatasetNm" id="txtDatasetNm" type="text" class="text sizePer3" maxlength="50" /></td>
+                            </tr>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>시나리오</th>
+                                <td colspan="3">
+                                    <select name="slcScenarioCd" id="slcScenarioCd">
+                                        <option value="FIRE">화재</option>
+                                        <option value="SNOW">폭설</option>
+                                        <option value="FLOOD">홍수</option>
+                                        <option value="TIDE">녹,적조</option>
+                                  </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>설명</th>
+                                <td colspan="3">
+                                    <input name="txtRemark" id="txtRemark" type="text" class="text sizePer" maxlength="150" value="" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>생성일</th>
+                                <td><span id="spnCreateTmDesc"></span></td>
+                                <th>수정일</th>
+                                <td><span id="spnUpdateTmDesc"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">이미지 정보</legend>
+                    <h3>* 이미지 정보</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>이미지사이즈 </th>
+                                <td>가로 : <input name="txtImgHorPx" id="txtImgHorPx" type="text" class="text sizeser5 " maxlength="4" />,
+                                    세로 : <input name="txtImgVerPx" id="txtImgVerPx" type="text" class="text sizeser5 " maxlength="4" />(pixel)</td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>이미지타입</th>
+                                <td>
+                                    <select name="slcImgTypeCd" id="slcImgTypeCd">
+                                        <option value="RGB">RGB</option>
+                                        <option value="GRAY_SCALE">Gray Scale</option>
+                                  </select>
+                                </td>
+                            </tr>
+
+                            <tr>
+                               <th><span class="Ttype1 displayIb mr5">*</span>용도별 비율</th>
+                               <td colspan="3">학습 : <input name="txtUseLearningRate" id="txtUseLearningRate" type="text" class="text sizeser5 " maxlength="3"  />
+                                , 검증 : <input name="txtUseVerifyRate" id="txtUseVerifyRate" type="text" class="text sizeser5 " maxlength="3"  />
+                                , 시험 : <input name="txtUseTestRate" id="txtUseTestRate" type="text" class="text sizeser5 " maxlength="3" /></td>
+                            </tr>
+
+                            <tr>
+                                <th><span class="Ttype1 displayIb mr5">*</span>trainX 파일</th>
+                                <td>
+                                    <a class="download_a" id="ankTrainX" href=""></a>
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>trainY 파일</th>
+                                <td>
+                                    <a class="download_a" id="ankTrainY" href=""></a>
+                                </td>
+                            </tr>
+
+                            <tr style="height: 450px;">
+                                <th><span class="Ttype1 displayIb mr5">*</span>trainX 미리보기
+                                  <br>
+                                  <button class="btnImg18 btnType03s" type="button" id="btnPrevX"></button>
+                                  <button class="btnImg19 btnType03s" type="button" id="btnNextX"></button>
+                                </th>
+
+                                <td>
+
+
+
+                                    <img src="" style="width: 90%;" id="imageX" />
+                                    <br>
+                                    <span id="imageXtext"></span>
+
+
+
+
+
+
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>trainY 미리보기
+                                  <br>
+                                  <button class="btnImg18 btnType03s" type="button" id="btnPrevY"></button>
+                                  <button class="btnImg19 btnType03s" type="button" id="btnNextY"></button>
+                                </th>
+
+
+                                <td>
+
+
+                                    <img src="" style="width: 90%;" id="imageY" />
+                                    <br>
+                                    <span id="imageYtext"></span>
+
+
+                                </td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+
+                    <div class="txetR mt20 mb30">
+                      <button class="btnImg13 btnType03s" type="button" id="btnSave">저장</button>
+                        <button class="btnImg12 btnType03s" type="button" id="btnList">리스트</button>
+
+                    </div>
+
+                </div>
+
+
+            </form>
+             </div>
+
+        </div>
+
+    </div> -->
+      <%- include('../common/copyright'); -%>
+      <script>
+        feather.replace()
+      </script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<%
+
+var resData             = tranData.data;
+var learningModelCd     = resData.learningModelCd;
+var listLearningModel   = resData.listLearningModel;
+
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- Html -->
+<!--[if lt IE 7 ]><html class="ie ie6" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" dir="ltr" lang="ko"> <![endif]-->
+<!--[if IE 9 ]><html class="ie ie9" dir="ltr" lang="ko"> <![endif]-->
+<!--[if (gte IE 10)|!(IE)]><!-->
+<HTML lang="ko" dir="ltr">
+<!--<![endif]-->
+
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+   <title></title>
+   <meta name="description" content="aiMovieTool">
+   <meta name="인공지능동영상툴">
+   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+   <link href="/css/style.css" rel="stylesheet">
+   <script type="text/javascript" src="/js/jquery-1.10.2.min.js"></script>
+   <script src="/js/jsUser.js"></script>
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+   <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+   <!--[if lt IE 9]><script src="../../js/html5.js"></script><![endif]-->
+
+   <script src="/js/common.js" type="text/javaScript"></script>
+   <script type="text/javaScript">
+
+   var gLearningModel   = [];
+   var gDefEpochs       = "30";
+   var gDefBatchSize    = "30";
+   var gLearningModelCd = "<%= learningModelCd %>";
+
+   // 초기화
+   $(document).ready(function (){
+
+      // 모델 변경시 처리
+      $("#slcLearningModel").change(function(){
+         var idxSelected   = $("#slcLearningModel option").index($("#slcLearningModel option:selected"));
+         $("#spnUseYn").text(gLearningModel[idxSelected].useYnDesc);
+
+         retrieveModel($("#slcLearningModel").val());
+      });
+
+      // 신규 모델
+      $("#btnAddModel").click(function(){
+         initModel();
+      });
+
+      // 파라미터 추가
+      $("#btnAddParams").click(function(){
+         addModelParam("", "");
+      });
+
+      // 모델 삭제
+      $("#btnDel").click(function(){
+         var modelCd = $("#txtLearningModelCd").val();
+         if (modelCd == ""){
+            alert("선택된 딥러닝 모델이 없습니다.");
+            return;
+         }
+
+         if (!confirm("삭제하시겠습니까?")){
+            return;
+         }
+
+         $("#frmPage").attr("action","/learning/modelManagement/deleteSave");
+         $("#frmPage").attr("method","POST");
+         $("#frmPage").submit();
+      });
+
+      // 입력 내용 저장
+      $("#btnSave").click(function(){
+         // 입력 내용 확인
+         if (!cf_checkNullAndGetFocus($("#txtLearningModelNm"), "딥러닝모델명을 입력해 주세요."))   return;
+         if (!cf_checkNullAndGetFocus($("#txtRemark"), "설명을 입력해 주세요."))   return;
+
+         var isReturn   = false;
+         $("input[name=txtParamNm]").each(function(index, item){
+            if ($(this).val() == ""){
+               alert("파라미터 명을 입력해 주세요");
+               $(this).focus();
+               isReturn = true;
+               return false;
+            }
+         });
+         if (isReturn)
+            return;
+
+         $("input[name=txtDefaultVal]").each(function(index, item){
+            if ($(this).val() == ""){
+               alert("기본값을 입력해 주세요");
+               $(this).focus();
+               isReturn = true;
+               return false;
+            }
+         });
+         if (isReturn)
+            return;
+
+         // 저장
+         if (!confirm("저장하시겠습니까?"))
+            return;
+
+         $("#frmPage").attr("action","/learning/modelManagement/createSave");
+         $("#frmPage").attr("method","POST");
+         $("#frmPage").submit();
+      });
+
+      // 모델 설정
+
+<%
+   for (var i=0; i<listLearningModel.length; i++){
+%>
+      gLearningModel.push({learningModelCd:'<%= listLearningModel[i].learning_model_cd %>', learningModelNm:'<%= listLearningModel[i].learning_model_nm %>', useYnDesc:'<%= listLearningModel[i].use_yn_desc %>'});
+<%
+   }
+%>
+      for (var i=0; i<gLearningModel.length; i++){
+         $("#slcLearningModel").append("<option value='" + gLearningModel[i].learningModelCd + "'>[" + gLearningModel[i].learningModelCd + "]" + gLearningModel[i].learningModelNm + "</option>");
+      }
+      if (gLearningModel.length > 0){
+         if (gLearningModelCd == ""){
+            $("#slcLearningModel option:eq(0)").attr("selected", "selected");
+            $("#spnUseYn").text(gLearningModel[0].useYnDesc);
+         }
+         else {
+            $("#slcLearningModel").val(gLearningModelCd);
+            var selIdx  = $("#slcLearningModel option").index($("#slcLearningModel option:selected"));
+            $("#spnUseYn").text(gLearningModel[selIdx].useYnDesc);
+         }
+         retrieveModel($("#slcLearningModel").val());
+      }
+   });
+
+   // 모델 내용을 초기화
+   function initModel(){
+      // 모델 설정
+      $("#txtLearningModelCd").val("");
+      $("#txtLearningModelNm").val("");
+      $("#txtRemark").val("");
+      $("#spnCreateTm").text("");
+      $("#spnUpdateTm").text("");
+
+      // 파라미터 설정
+      //initModelParams(gDefEpochs, gDefBatchSize);
+      initModelParams();
+      $("#btnDel").hide();
+   }
+
+   // 모델 파라미터 내용을 초기화
+   //function initModelParams(defEpochs, defBatchSize){
+   function initModelParams(){
+      $(".paramAdded").remove();
+      //$("input[name=txtDefaultVal]:eq(0)").val(defEpochs);
+      //$("input[name=txtDefaultVal]:eq(1)").val(defBatchSize);
+   }
+
+   // 파라미터 추가
+   function addModelParam(paramNm, defaultVal){
+
+      if ($("#btnDelParam").size() > 0)
+            $("#btnDelParam").remove();
+
+      var objBody = $("#tbdParamList");
+      var trCnt   = objBody.children().size();
+
+      var objTr   = $('<tr class="paramAdded"></tr>');
+      objTr.append('<td>' + (trCnt + 1) + '<input name="txtParamIdx" id="txtParamIdx" type="hidden" value="' + trCnt + '" /></td>');
+      //if(paramNm == 'GPU_IDS') {
+      //  objTr.append('<td><input name="txtParamNm" id="txtParams" type="text" class="text sizePer3 readonly"  readonly value="' + paramNm + '" maxlength="30" /></td>');
+      //}
+      //else {
+        objTr.append('<td><input name="txtParamNm" id="txtParams" type="text" class="text sizePer3 " value="' + paramNm + '" maxlength="30" /></td>');
+      //}
+      objTr.append('<td><input name="txtDefaultVal" id="txtDefaultVal" type="text" class="text sizePer3 " value="' + defaultVal + '" maxlength="30" /></td>');
+      objTr.append('<td><button id="btnDelParam" class="btnType04s" type="button">삭제</button></td>');
+
+      $("#tbdParamList").append(objTr);
+      setDelParamEvent();
+   }
+
+   // 파라미터 삭제 버튼에 이벤트 설정
+   function setDelParamEvent(){
+
+      $("#btnDelParam").click(function(){
+         var btnHtml = $(this).parent().html();
+
+         $(this).parent().parent().remove();
+
+         var objBody = $("#tbdParamList");
+         var trCnt   = objBody.children().size();
+         if (trCnt > 2){
+            $("#tbdParamList tr:last td:last").html(btnHtml);
+            setDelParamEvent();
+         }
+      });
+   }
+
+   // learning 모델 정보를 가져옴
+   function retrieveModel(learningModelCd){
+
+      $.ajax({
+         url:"/learning/modelManagement/update",
+         async:true,
+         type:"POST",
+         data:{txtLearningModelCd:learningModelCd},
+         dataType:"json",
+
+         // 모델과 파라미터 정보를 조회해서 데이타 설정
+         success:function(data){
+            var learningModel = data.listLearningModel;
+            var learningModelParams = data.listLearningModelParams;
+
+            if (learningModel.length < 1){
+               alert("딥러닝 모델 정보가 없습니다. 데이타 확인을 요망합니다.");
+               return;
+            }
+
+            // 모델 값 설정
+            $("#spnUseYn").text(learningModel[0].use_yn_desc);
+            $("#txtLearningModelCd").val(learningModel[0].learning_model_cd);
+            $("#txtLearningModelNm").val(learningModel[0].learning_model_nm);
+            $("#txtRemark").val(learningModel[0].remark);
+            $("#spnCreateTm").text(learningModel[0].create_tm_desc);
+            $("#spnUpdateTm").text(learningModel[0].update_tm_desc);
+
+            $("#btnDel").show();
+            if (learningModel[0].use_yn == "Y"){
+               $("#btnDel").hide();
+            }
+
+            // 파라미터 설정
+            //initModelParams(learningModelParams[0].default_val, learningModelParams[1].default_val);\
+            initModelParams();
+            for (var i=0; i<learningModelParams.length; i++){
+               addModelParam(learningModelParams[i].param_nm, learningModelParams[i].default_val);
+            }
+
+         },
+
+         // 에러처리
+         error:function(req, status, err){
+            var msg = "ERROR : " + req.status;
+            alert(msg);
+
+            msg +=  "<br>내용 : " + req.responseText + "<br>" + error;
+            console.log(msg);
+         }
+      });
+   }
+
+    </script>
+
+</head>
+
+<body>
+    <div id="wrap">
+        <!-- header 시작 -->
+        <div id="header">
+            <%- include('../common/menu'); -%>
+        </div>
+        <!-- header 종료 -->
+
+        <!-- container 시작 -->
+        <div id="container" class="">
+
+            <!-- Contents 시작 -->
+            <div id="contents">
+                <h2>모델 목록<span>Home > 학습 > 모델 목록</span></h2>
+
+                <div class="cboth"></div>
+
+                <!-- List 시작 -->
+                <div class="search">
+                <form id="frmPage">
+                    <legend class="invisible">등록된 딥러닝 모델</legend>
+                    <h3>* 등록된 딥러닝 모델</h3>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th ><span class="Ttype1 displayIb mr5">*</span>딥러닝모델</th>
+                                <td >
+                                    <select name="slcLearningModel" id="slcLearningModel"></select>
+                                </td>
+                                <th >사용유무</th>
+                                <td ><span name="spnUseYn" id="spnUseYn"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">딥러닝 모델 정보</legend>
+                    <h3>* 딥러닝 모델 정보</h3> <button id="btnAddModel" class="btnImg04 btnType07s" type="button">신규모델생성</button>
+                    <table>
+                        <colgroup>
+                           <col style="width: 20%;" />
+                           <col style="width: 30%;" />
+                           <col style="width: 20%;" />
+                           <col />
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <th>딥러닝모델코드</th>
+                                <td>
+                                    <input name="txtLearningModelCd" id="txtLearningModelCd" type="text" class="text sizePer3 readonly" readonly value="M20-0001" />
+                                </td>
+                                <th><span class="Ttype1 displayIb mr5">*</span>딥러닝모델명</th>
+                                <td>
+                                    <input name="txtLearningModelNm" id="txtLearningModelNm" type="text" class="text sizePer3 " maxlength="25" value="GAN모델" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>설명</th>
+                                <td colspan="3">
+                                    <input name="txtRemark" id="txtRemark" type="text" class="text sizePer " maxlength="150" value="GAN모델을 구현했습니다." />
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>생성일</th>
+                                <td><span id="spnCreateTm">2020.03.10 11:30</span></td>
+                                <th>수정일</th>
+                                <td><span id="spnUpdateTm">2020.03.10 11:30</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <legend class="invisible">딥러닝 파라미터 정보</legend>
+                    <h3>* 딥러닝 파라미터 정보</h3> <button id="btnAddParams" class="btnType07s" type="button">파라미터추가</button>
+                    <div class="scroll-tbl_x">
+                        <table class="board-list" style="width: 100%;margin-bottom:10px;" summary="학습 파라미터 조회리스트입니다.">
+                          <colgroup>
+                            <col />
+                            <col />
+                            <col />
+                            <col />
+                          </colgroup>
+                          <thead>
+                            <tr>
+                              <th >NO</th>
+                              <th >파라미터 명</th>
+                              <th >기본값</th>
+                              <th >삭제</th>
+                            </tr>
+                          </thead>
+                          <tbody id="tbdParamList">
+                            <!--
+                            <tr>
+                              <td>1<input name="txtParamIdx" id="txtParamIdx" type="hidden" value="0" /></td>
+                              <td><input name="txtParamNm" id="txtParams" type="text" class="text sizePer3 readonly " readonly value="Training_Epochs" maxlength="30" /></td>
+                              <td><input name="txtDefaultVal" id="txtDefaultVal" type="text" class="text sizePer3 " value="30" maxlength="30" /></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                              <td>2<input name="txtParamIdx" id="txtParamIdx" type="hidden" value="1" /></td>
+                              <td><input name="txtParamNm" id="txtParams" type="text" class="text sizePer3 readonly " readonly value="Batch_Size" maxlength="30" /></td>
+                              <td><input name="txtDefaultVal" id="txtDefaultVal" type="text" class="text sizePer3 " value="30" maxlength="30" /></td>
+                              <td>&nbsp;</td>
+                            </tr>
+                          -->
+
+                          </tbody>
+                        </table>
+                      </div>
+
+                    <div class="txetR mt5 mb30">
+                       <button id="btnDel" class="btnImg03 btnType03s" type="button">폐기</button>
+                       <button id="btnSave" class="btnImg13 btnType03s" type="button">저장</button>
+                    </div>
+
+                <!-- List 끝 -->
+                </form>
+                </div>
+
+             <!-- copyright -->
+             <div class="mt40" style="text-align: center;">Copyright(c) KISA. All right Reserves.</div>
+
+             <!-- Contents 종료 -->
+             </div>
+
+        <!-- container 종료 -->
+        </div>
+
+    </div>
+</body>
+</html>
